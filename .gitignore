@@ -1,5 +1,13 @@
-# Created by https://www.toptal.com/developers/gitignore/api/linux
-# Edit at https://www.toptal.com/developers/gitignore?templates=linux
+
+# Created by https://www.toptal.com/developers/gitignore/api/linux,windows,macos,backup,vim,visualstudiocode,packer,vagrant
+# Edit at https://www.toptal.com/developers/gitignore?templates=linux,windows,macos,backup,vim,visualstudiocode,packer,vagrant
+
+### Backup ###
+*.bak
+*.gho
+*.ori
+*.orig
+*.tmp
 
 ### Linux ###
 *~
@@ -15,42 +23,6 @@
 
 # .nfs files are created when an open file is removed but is still being accessed
 .nfs*
-
-# End of https://www.toptal.com/developers/gitignore/api/linux
-
-# Created by https://www.toptal.com/developers/gitignore/api/windows
-# Edit at https://www.toptal.com/developers/gitignore?templates=windows
-
-### Windows ###
-# Windows thumbnail cache files
-Thumbs.db
-Thumbs.db:encryptable
-ehthumbs.db
-ehthumbs_vista.db
-
-# Dump file
-*.stackdump
-
-# Folder config file
-[Dd]esktop.ini
-
-# Recycle Bin used on file shares
-$RECYCLE.BIN/
-
-# Windows Installer files
-*.cab
-*.msi
-*.msix
-*.msm
-*.msp
-
-# Windows shortcuts
-*.lnk
-
-# End of https://www.toptal.com/developers/gitignore/api/windows
-
-# Created by https://www.toptal.com/developers/gitignore/api/macos
-# Edit at https://www.toptal.com/developers/gitignore?templates=macos
 
 ### macOS ###
 # General
@@ -80,22 +52,24 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-# End of https://www.toptal.com/developers/gitignore/api/macos
+### Packer ###
+# Cache objects
+packer_cache/
 
-# Created by https://www.toptal.com/developers/gitignore/api/backup
-# Edit at https://www.toptal.com/developers/gitignore?templates=backup
+# Crash log
+crash.log
 
-### Backup ###
-*.bak
-*.gho
-*.ori
-*.orig
-*.tmp
+# For built boxes
+*.box
 
-# End of https://www.toptal.com/developers/gitignore/api/backup
+### Vagrant ###
+# General
+.vagrant/
 
-# Created by https://www.toptal.com/developers/gitignore/api/vim
-# Edit at https://www.toptal.com/developers/gitignore?templates=vim
+# Log files (if you are creating logs in debug mode, uncomment this)
+# *.log
+
+### Vagrant Patch ###
 
 ### Vim ###
 # Swap
@@ -112,16 +86,10 @@ Sessionx.vim
 
 # Temporary
 .netrwhist
-*~
 # Auto-generated tag files
 tags
 # Persistent undo
 [._]*.un~
-
-# End of https://www.toptal.com/developers/gitignore/api/vim
-
-# Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode
-# Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode
 
 ### VisualStudioCode ###
 .vscode/*
@@ -134,6 +102,32 @@ tags
 .history
 .ionide
 
-# End of https://www.toptal.com/developers/gitignore/api/visualstudiocode
+### Windows ###
+# Windows thumbnail cache files
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+
+# Dump file
+*.stackdump
+
+# Folder config file
+[Dd]esktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# End of https://www.toptal.com/developers/gitignore/api/linux,windows,macos,backup,vim,visualstudiocode,packer,vagrant
 
 ###### Custom project specific overrides ######

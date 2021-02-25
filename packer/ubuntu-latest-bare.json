@@ -1,0 +1,96 @@
+{
+  "variables": {
+    "edition-name": "latest",
+    "edition-version": "20.10",
+    "build-type": "bare"
+  },
+  "builders": [
+    {
+      "name": "ubuntu-{{user `edition-name`}}-{{user `build-type`}}",
+      "type": "virtualbox-iso",
+      "guest_os_type": "Ubuntu_64",
+      "iso_url": "https://releases.ubuntu.com/{{user `edition-version`}}/ubuntu-{{user `edition-version`}}-live-server-amd64.iso",
+      "iso_checksum": "file:https://releases.ubuntu.com/{{user `edition-version`}}/SHA256SUMS",
+
+      "headless": true,
+
+      "http_directory": "http",
+
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_handshake_attempts": "100",
+
+      "ssh_timeout": "90m",
+      "boot_wait": "3s",
+
+      "shutdown_command": "echo 'vagrant' | sudo -S systemctl poweroff",
+
+      "hard_drive_interface": "sata",
+      "format": "ovf",
+      "disk_size": "102400",
+      "guest_additions_mode": "disable",
+
+      "vboxmanage": [
+        ["modifyvm", "{{.Name}}", "--ostype", "Ubuntu_64"],
+        ["modifyvm", "{{.Name}}", "--firmware", "efi"],
+        ["modifyvm", "{{.Name}}", "--memory", "8192"],
+        ["modifyvm", "{{.Name}}", "--cpus", "2"],
+        ["modifyvm", "{{.Name}}", "--pae", "on"],
+        ["modifyvm", "{{.Name}}", "--acpi", "on"],
+        ["modifyvm", "{{.Name}}", "--ioapic", "on"],
+        ["modifyvm", "{{.Name}}", "--vram", "128"],
+        ["modifyvm", "{{.Name}}", "--accelerate3d", "on"],
+        ["modifyvm", "{{.Name}}", "--graphicscontroller", "vmsvga"],
+        ["modifyvm", "{{.Name}}", "--monitorcount", "1"],
+        ["modifyvm", "{{.Name}}", "--hwvirtex", "on"],
+        ["modifyvm", "{{.Name}}", "--nestedpaging", "on"],
+        ["modifyvm", "{{.Name}}", "--nested-hw-virt", "on"],
+        ["modifyvm", "{{.Name}}", "--clipboard-mode", "bidirectional"],
+        ["modifyvm", "{{.Name}}", "--draganddrop", "bidirectional"],
+        ["modifyvm", "{{.Name}}", "--rtcuseutc", "on"],
+        ["modifyvm", "{{.Name}}", "--mouse", "usb"],
+        ["modifyvm", "{{.Name}}", "--keyboard", "usb"],
+        ["modifyvm", "{{.Name}}", "--audiocontroller", "hda"],
+        ["modifyvm", "{{.Name}}", "--audioout", "on"],
+        ["modifyvm", "{{.Name}}", "--audioin", "on"],
+        ["modifyvm", "{{.Name}}", "--audio", "pulse"],
+        ["modifyvm", "{{.Name}}", "--usb", "on"],
+        ["modifyvm", "{{.Name}}", "--usbehci", "on"],
+        ["modifyvm", "{{.Name}}", "--usbxhci", "off"]
+      ],
+
+      "boot_command": [
+        "c<wait3> ",
+        "linux /casper/vmlinuz ",
+        "\"ds=nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ubuntu-{{user `edition-name`}}/\" ",
+        "quiet autoinstall ---<enter>",
+        "initrd /casper/initrd<enter>",
+        "boot<enter>"
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
+      "scripts": ["scripts/vagrant.sh"]
+    },
+    {
+      "type": "shell",
+      "execute_command": "{{.Vars}} sudo -E bash '{{.Path}}'",
+      "scripts": ["scripts/updates.sh"],
+      "expect_disconnect": true
+    },
+    {
+      "type": "shell",
+      "execute_command": "{{.Vars}} sudo -E bash '{{.Path}}'",
+      "scripts": ["scripts/virtualbox.sh", "scripts/minimize.sh"]
+    }
+  ],
+  "post-processors": [
+    {
+      "output": "boxes/bfee-ubuntu-{{user `edition-name`}}-{{user `build-type`}}.box",
+      "type": "vagrant"
+    }
+  ]
+}

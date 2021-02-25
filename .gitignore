@@ -1,6 +1,8 @@
+# Created by https://www.toptal.com/developers/gitignore/api/linux,windows,macos,backup,vim,visualstudiocode,packer,vagrant,ansible
+# Edit at https://www.toptal.com/developers/gitignore?templates=linux,windows,macos,backup,vim,visualstudiocode,packer,vagrant,ansible
 
-# Created by https://www.toptal.com/developers/gitignore/api/linux,windows,macos,backup,vim,visualstudiocode,packer,vagrant
-# Edit at https://www.toptal.com/developers/gitignore?templates=linux,windows,macos,backup,vim,visualstudiocode,packer,vagrant
+### Ansible ###
+*.retry
 
 ### Backup ###
 *.bak
@@ -128,6 +130,9 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.toptal.com/developers/gitignore/api/linux,windows,macos,backup,vim,visualstudiocode,packer,vagrant
+# End of https://www.toptal.com/developers/gitignore/api/linux,windows,macos,backup,vim,visualstudiocode,packer,vagrant,ansible
 
 ###### Custom project specific overrides ######
+# Packer uses a temporary folder for build output, even though they are temporary and get removed,
+# I don't want to accidentally get them added to the repo
+output-*/

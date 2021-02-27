@@ -12,7 +12,7 @@
       "iso_url": "https://releases.ubuntu.com/{{user `edition-version`}}/ubuntu-{{user `edition-version`}}-live-server-amd64.iso",
       "iso_checksum": "file:https://releases.ubuntu.com/{{user `edition-version`}}/SHA256SUMS",
 
-      "headless": true,
+      "headless": false,
 
       "http_directory": "http",
 
@@ -77,14 +77,20 @@
     },
     {
       "type": "shell",
-      "execute_command": "{{.Vars}} sudo -E bash '{{.Path}}'",
-      "scripts": ["scripts/updates.sh"],
+      "execute_command": "{{.Vars}} sudo -H -E bash '{{.Path}}'",
+      "scripts": ["scripts/updates.sh", "scripts/reboot.sh"],
       "expect_disconnect": true
     },
     {
       "type": "shell",
-      "execute_command": "{{.Vars}} sudo -E bash '{{.Path}}'",
-      "scripts": ["scripts/virtualbox.sh", "scripts/minimize.sh"]
+      "execute_command": "{{.Vars}} sudo -H -E bash '{{.Path}}'",
+      "scripts": ["scripts/ansible.sh", "scripts/virtualbox.sh", "scripts/reboot.sh"],
+      "expect_disconnect": true
+    },
+    {
+      "type": "shell",
+      "execute_command": "{{.Vars}} sudo -H -E bash '{{.Path}}'",
+      "scripts": ["scripts/minimize.sh"]
     }
   ],
   "post-processors": [

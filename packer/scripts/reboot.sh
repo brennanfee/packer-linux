@@ -9,13 +9,5 @@ if ! $SOURCED; then
   IFS=$'\n\t'
 fi
 
-if command -v apt-get &> /dev/null
-then
-  DEBIAN_FRONTEND=noninteractive apt-get -y -q update
-  DEBIAN_FRONTEND=noninteractive apt-get -y -q full-upgrade
-fi
-
-if command -v pacman &> /dev/null
-then
-  pacman -noconfirm -noprogressbar -Syyu
-fi
+## Reboot
+systemctl reboot

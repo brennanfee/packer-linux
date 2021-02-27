@@ -14,3 +14,20 @@ autoinstall:
     install-server: true
   user-data:
     disable_root: false
+  refresh-installer:
+    update: true
+  packages:
+    - wget
+    - curl
+    - lsb-release
+    - build-essential
+    - dkms
+    - sudo
+    - acl
+    - git
+    - python3-dev
+    - python3-setuptools
+    - python3-wheel
+    - python3-keyring
+    - python3-venv
+    - python3-pip

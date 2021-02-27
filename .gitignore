@@ -136,3 +136,4 @@ $RECYCLE.BIN/
 # Packer uses a temporary folder for build output, even though they are temporary and get removed,
 # I don't want to accidentally get them added to the repo
 output-*/
+logs/

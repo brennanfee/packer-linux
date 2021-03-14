@@ -18,10 +18,12 @@ fi
 
 # Need to force a re-install of pip to fix an issue on debian stable, shouldn't hurt on
 # other distros
-/usr/bin/python3 -m pip install --ignore-installed pip
+curl -sSL https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+/usr/bin/python3 get-pip.py
+rm get-pip.py
 
 # Update existing pip packages
 /usr/bin/python3 -m pip list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1 | xargs -n1 /usr/bin/python3 -m pip install -U
 
 # Install Ansible
-/usr/bin/python3 -m pip install ansible
+/usr/bin/python3 -m pip install ansible cryptography

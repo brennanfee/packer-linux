@@ -1,7 +1,7 @@
 {
   "variables": {
     "edition-name": "stable",
-    "edition-version": "10.8.0",
+    "edition-version": "10.9.0",
     "build-type": "bare"
   },
   "builders": [

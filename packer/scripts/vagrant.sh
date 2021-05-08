@@ -9,8 +9,6 @@ if ! $SOURCED; then
   IFS=$'\n\t'
 fi
 
-date | sudo tee /srv/vagrant_box_build_time
-
 if (grep -q -i -E "^vagrant:" /etc/passwd) then
   echo 'Setting up vagrant user'
 

@@ -91,7 +91,12 @@
     {
       "type": "shell",
       "execute_command": "{{.Vars}} sudo -H -E bash '{{.Path}}'",
-      "scripts": ["scripts/ansible.sh", "scripts/virtualbox.sh", "scripts/reboot.sh"],
+      "scripts": [
+        "scripts/ansible.sh",
+        "scripts/virtualbox.sh",
+        "scripts/stamp.sh",
+        "scripts/reboot.sh"
+      ],
       "expect_disconnect": true
     },
     {

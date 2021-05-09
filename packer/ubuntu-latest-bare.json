@@ -9,6 +9,7 @@
       "name": "ubuntu-{{user `edition-name`}}-{{user `build-type`}}",
       "type": "virtualbox-iso",
       "guest_os_type": "Ubuntu_64",
+      "iso_interface": "sata",
       "iso_url": "https://releases.ubuntu.com/{{user `edition-version`}}/ubuntu-{{user `edition-version`}}-live-server-amd64.iso",
       "iso_checksum": "file:https://releases.ubuntu.com/{{user `edition-version`}}/SHA256SUMS",
 
@@ -28,7 +29,7 @@
       "hard_drive_interface": "sata",
       "format": "ovf",
       "disk_size": "102400",
-      "guest_additions_mode": "disable",
+      "guest_additions_mode": "upload",
 
       "vboxmanage": [
         ["modifyvm", "{{.Name}}", "--ostype", "Ubuntu_64"],

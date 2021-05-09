@@ -8,6 +8,7 @@
       "name": "debian-{{user `edition-name`}}-{{user `build-type`}}",
       "type": "virtualbox-iso",
       "guest_os_type": "Debian_64",
+      "iso_interface": "sata",
       "iso_url": "https://cdimage.debian.org/cdimage/weekly-builds/amd64/iso-cd/debian-testing-amd64-netinst.iso",
       "iso_checksum": "file:https://cdimage.debian.org/cdimage/weekly-builds/amd64/iso-cd/SHA256SUMS",
 
@@ -26,7 +27,7 @@
       "hard_drive_interface": "sata",
       "format": "ovf",
       "disk_size": "102400",
-      "guest_additions_mode": "disable",
+      "guest_additions_mode": "upload",
 
       "vboxmanage": [
         ["modifyvm", "{{.Name}}", "--ostype", "Debian_64"],

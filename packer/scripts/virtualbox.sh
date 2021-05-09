@@ -24,17 +24,12 @@ fi
 # NOTE: Why the ISO?  In Debian the guest addition packages are no longer
 # available and while Ubuntu offers them, this provides consistency.
 
-# Get the ISO, this version uses the apt package (usually out of date)
-#DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends virtualbox-guest-additions-iso
-
-# Get the ISO, this version uses the virutalbox site (more up-to-date)
-mkdir /usr/share/virtualbox
-version=$(curl -LSs https://download.virtualbox.org/virtualbox/LATEST-STABLE.TXT)
-curl -LSs -o /usr/share/virtualbox/VBoxGuestAdditions.iso "https://download.virtualbox.org/virtualbox/$version/VBoxGuestAdditions_$version.iso"
+# The ISO was uploaded by packer guest_additions_mode="upload".
 
 # Mount the ISO and run the install
 mkdir /media/vb-additions
-mount /usr/share/virtualbox/VBoxGuestAdditions.iso /media/vb-additions -o loop
+mount /home/vagrant/VBoxGuestAdditions.iso /media/vb-additions -o loop
 /media/vb-additions/VBoxLinuxAdditions.run --nox11 || true
 umount /media/vb-additions
 rmdir /media/vb-additions
+rm /home/vagrant/VBoxGuestAdditions.iso

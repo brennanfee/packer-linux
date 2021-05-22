@@ -25,6 +25,6 @@ function load_box() {
 }
 
 load_box "bfee-ubuntu-lts-bare"
-load_box "bfee-ubuntu-latest-bare"
+load_box "bfee-ubuntu-rolling-bare"
 load_box "bfee-debian-stable-bare"
 load_box "bfee-debian-testing-bare"

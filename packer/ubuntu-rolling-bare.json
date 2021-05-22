@@ -1,6 +1,6 @@
 {
   "variables": {
-    "edition-name": "latest",
+    "edition-name": "rolling",
     "edition-version": "21.04",
     "build-type": "bare"
   },

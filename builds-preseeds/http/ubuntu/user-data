@@ -1,0 +1,209 @@
+#cloud-config
+# vim: set filetype=yaml :
+autoinstall:
+  version: 1
+  locale: en_US
+  keyboard:
+    layout: en
+    variant: us
+  identity:
+    hostname: ubuntu
+    password: $6$Ky49b8mBZ1nrwHkn$DSQUXl/7h0UceoZtZYQD9moOLkNAlO2Z1UjUHhDvKDDH3PJdhWzGB3x9ox1Zjm742hECPz2sMXFZm.rtOIlR81
+    username: ubuntu
+  early-commands:
+    - - bash
+      - -c
+      - |
+        # Start with disabling ssh
+        systemctl stop ssh
+
+        # Read the values from the linux kernel command.
+
+        if [ -z $AUTO_HOSTNAME ]; then
+          AUTO_HOSTNAME=$(cat /proc/cmdline | grep -Po 'AUTO_HOSTNAME=[^ ]*')
+          AUTO_HOSTNAME=${AUTO_HOSTNAME:14}
+        fi
+
+        if [ -z $AUTO_USERNAME ]; then
+          AUTO_USERNAME=$(cat /proc/cmdline | grep -Po 'AUTO_USERNAME=[^ ]*')
+          AUTO_USERNAME=${AUTO_USERNAME:14}
+        fi
+
+        if [ -z $AUTO_PASSWORD ]; then
+          AUTO_PASSWORD=$(cat /proc/cmdline | grep -Po 'AUTO_PASSWORD=[^ ]*')
+          AUTO_PASSWORD=${AUTO_PASSWORD:14}
+        fi
+
+        if [ -z $AUTO_MAIN_DISK ]; then
+          AUTO_MAIN_DISK=$(cat /proc/cmdline | grep -Po 'AUTO_MAIN_DISK=[^ ]*')
+          AUTO_MAIN_DISK=${AUTO_MAIN_DISK:15}
+        fi
+
+        # NOTE: AUTO_PASSWORD supports both unencrypted and encrypted passwords.
+        # However, encrypted passwords need to be passed on the Linux boot command
+        # line in base64 to avoid conflicts.  We detect a base64 string by the
+        # closing equal symbol '=' that is at the end of all base64 strings.
+        # We also detect crypted passwords with the dollar symbol '$' that is
+        # at the front of all crypted passwords.
+
+        echo "CMDLINE=$(cat /proc/cmdline)" >> /autoinstall-inputs.txt
+        echo "HOSTNAME=$AUTO_HOSTNAME" >> /autoinstall-inputs.txt
+        echo "USERNAME=$AUTO_USERNAME" >> /autoinstall-inputs.txt
+        echo "PASSWORD=$AUTO_PASSWORD" >> /autoinstall-inputs.txt
+        echo "MAIN_DISK=$AUTO_MAIN_DISK" >> /autoinstall-inputs.txt
+
+        # If it is base64 encoded, decode it
+        TEST=$(expr match $AUTO_PASSWORD '.*=')
+        if [ $TEST -ne 0 ]; then
+          AUTO_PASSWORD=$(echo $AUTO_PASSWORD | base64 --decode)
+        fi
+
+        echo "PASSWORD(base64)=$AUTO_PASSWORD" >> /autoinstall-inputs.txt
+
+        # If it is not encrypted, encrypt it
+        TEST=$(expr match $AUTO_PASSWORD '$.*')
+        if [ $TEST -eq 0 ]; then
+          AUTO_PASSWORD=$(echo $AUTO_PASSWORD | openssl passwd -6 -stdin)
+        fi
+
+        echo "PASSWORD(encrypted)=$AUTO_PASSWORD" >> /autoinstall-inputs.txt
+
+        # Throw it away to ensure we can boot - debugging, the password is 'test'
+        #AUTO_PASSWORD='$6$dBGHy9x3f7Ps8sqX$E4tLFh5LiGciwUoA4eLB1hMNTD84A2a3uejsm8jEsrVqob.pPgab1oRJdFFdPYYnSp7Qm0577PWKXooKCVDmM/'
+
+        # Use the values
+
+        if [ ! -z $AUTO_HOSTNAME ]; then
+          sed -i -r "/hostname:/ s|:.*$|: ${AUTO_HOSTNAME}|" /autoinstall.yaml
+        fi
+
+        if [ ! -z $AUTO_USERNAME ]; then
+          sed -i -r "/username:/ s|:.*$|: ${AUTO_USERNAME}|" /autoinstall.yaml
+        fi
+
+        if [ ! -z $AUTO_PASSWORD ]; then
+          sed -i -r "/password:/ s|:.*$|: ${AUTO_PASSWORD}|" /autoinstall.yaml
+        fi
+
+        if [ ! -z $AUTO_MAIN_DISK ]; then
+          if [ "$AUTO_MAIN_DISK" = "smallest" ]; then
+            # Replace the "size" designator
+            sed -i -r "s|size: smallest$|size: ${AUTO_MAIN_DISK}|" /autoinstall.yaml
+          elif [ "$AUTO_MAIN_DISK" = "largest" ]; then
+            # Replace the "size" designator
+            sed -i -r "s|size: smallest$|size: ${AUTO_MAIN_DISK}|" /autoinstall.yaml
+          else
+            # Assume they passed a device (/dev/sda) and replace the whole match
+            sed -i -r "/match:/ s|match:.*$|path: ${AUTO_MAIN_DISK}|" /autoinstall.yaml
+            sed -i -r "/size: smallest$/d" /autoinstall.yaml
+          fi
+        fi
+  ssh:
+    install-server: true
+  user-data:
+    disable_root: true
+  storage:
+    swap:
+      size: 0
+    config:
+      - id: disk-root
+        type: disk
+        ptable: gpt
+        wipe: superblock-recursive
+        match:
+          size: smallest
+      - id: part-boot
+        type: partition
+        device: disk-root
+        size: 1G
+      - id: part-efi
+        type: partition
+        device: disk-root
+        grub_device: true
+        flag: boot
+        size: 512MB
+      - id: part-main
+        type: partition
+        device: disk-root
+        size: -1
+      - id: format-part-boot
+        type: format
+        fstype: ext4
+        label: boot
+        volume: part-boot
+      - id: format-part-efi
+        type: format
+        fstype: vfat
+        label: efi
+        volume: part-efi
+      - id: format-part-main
+        type: format
+        fstype: ext4
+        label: root
+        volume: part-main
+      - id: mount-root
+        type: mount
+        path: /
+        device: format-part-main
+        options: "errors=remount-ro"
+      - id: mount-boot
+        type: mount
+        path: /boot
+        device: format-part-boot
+        passno: 2
+      - id: mount-efi
+        type: mount
+        path: /boot/efi
+        device: format-part-efi
+        passno: 1
+        options: "umask=0077"
+  late-commands:
+    - - sh
+      - -c
+      - |
+        # Create a swap file
+        fallocate -l 4G /target/swapfile
+        chmod 600 /target/swapfile
+        mkswap /target/swapfile
+
+        echo "/swapfile none swap sw 0 0" >> /target/etc/fstab
+
+        # Setup /tmp mounting with tmpfs
+        cp -v /target/usr/share/systemd/tmp.mount /target/etc/systemd/system/
+        curtin in-target --target=/target -- systemctl enable tmp.mount
+
+        # Because we have only one disk we need to create a /data folder as we
+        # will have no separate volume mounted there.
+        mkdir -p /target/data
+
+        # Copy the final autoinstall script
+        cp /autoinstall.yaml /target/data/autoinstall.yaml
+        chmod +r /target/data/autoinstall.yaml
+
+        if [ -f "/autoinstall-inputs.txt" ]; then
+          cp /autoinstall-inputs.txt /target/data/autoinstall-inputs.txt
+          chmod +r /target/data/autoinstall-inputs.txt
+        fi
+  refresh-installer:
+    update: true
+  packages:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - wget
+    - gnupg
+    - lsb-release
+    - build-essential
+    - dkms
+    - sudo
+    - acl
+    - git
+    - vim-nox
+    - python3-dev
+    - python3-setuptools
+    - python3-wheel
+    - python3-keyring
+    - python3-venv
+    - python3-pip
+    - python-is-python3
+    - software-properties-common

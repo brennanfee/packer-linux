@@ -1,11 +1,25 @@
 #!/usr/bin/env bash
 
-# Bash "strict" mode
-SOURCED=false && [ "$0" = "$BASH_SOURCE" ] || SOURCED=true
+# Bash strict mode
+([[ -n $ZSH_EVAL_CONTEXT && $ZSH_EVAL_CONTEXT =~ :file$ ]] ||
+ [[ -n $BASH_VERSION ]] && (return 0 2>/dev/null)) && SOURCED=true || SOURCED=false
 if ! $SOURCED; then
-  set -uo pipefail
+  set -o errexit # same as set -e
+  set -o nounset # same as set -u
+  set -o errtrace # same as set -E
+  set -o pipefail
+  set -o posix
+  #set -o xtrace # same as set -x, turn on for debugging
+
   shopt -s extdebug
-  IFS=$'\n\t'
+  IFS=$(printf '\n\t')
+fi
+# END Bash scrict mode
+
+# Must be root
+if [ $(id -u) -ne 0 ]; then
+  echo "This script must be run as root."
+  exit 1
 fi
 
 if command -v apt-get &> /dev/null
@@ -42,9 +56,5 @@ then
   solbuild dc -a
 fi
 
-echo "Write zeros"
-dd if=/dev/zero of=/junk bs=1M 2> /dev/null
 sync
-rm -f /junk
-
-sync
+fstrim -a

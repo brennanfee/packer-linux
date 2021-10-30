@@ -59,4 +59,4 @@ chmod 440 /etc/sudoers.d/svcacct
 
 # Pip
 [ ! -f "/tmp/get-pip.py" ] && curl -sSL https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py
-runuser --shell=/bin/bash svcacct -c "/usr/bin/python3 /tmp/get-pip.py --user"
+runuser --shell=/bin/bash svcacct -c "/usr/bin/python3 /tmp/get-pip.py --user --no-warn-script-location"

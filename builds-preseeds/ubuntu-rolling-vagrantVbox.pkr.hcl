@@ -23,17 +23,20 @@ variable "password" {
 }
 
 locals {
-  version = "21.04"
+  virtualization-type = "vagrantVbox"
+  configuration = "barePreseed"
+
   edition = "rolling"
+  version = "21.10"
 }
 
 source "virtualbox-iso" "ubuntu-preseed" {
   format        = "ova"
   iso_interface = "sata"
 
-  headless = false
+  headless = true
 
-  http_directory   = "${path.root}/http"
+  http_directory   = "${path.root}/http/ubuntu"
   output_directory = "${path.root}/output"
 
   communicator           = "ssh"
@@ -92,7 +95,7 @@ source "virtualbox-iso" "ubuntu-preseed" {
   boot_command = [
     "c<wait3> ",
     "linux /casper/vmlinuz ",
-    "\"ds=nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ubuntu/\" ",
+    "\"ds=nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/\" ",
     "AUTO_HOSTNAME=${var.hostname} ",
     "AUTO_USERNAME=${var.username} ",
     "AUTO_PASSWORD=${var.password} ",
@@ -106,7 +109,7 @@ build {
   source "sources.virtualbox-iso.ubuntu-preseed" {
     keep_registered = false
     skip_export     = false
-    vm_name         = "bfee-ubuntu-${local.edition}-vagrantVbox-barePreseed"
+    vm_name         = "bfee-ubuntu-${local.edition}-${local.virtualization-type}-${local.configuration}"
     iso_url         = "https://releases.ubuntu.com/${local.version}/ubuntu-${local.version}-live-server-amd64.iso"
     iso_checksum    = "file:https://releases.ubuntu.com/${local.version}/SHA256SUMS"
   }
@@ -134,12 +137,12 @@ build {
   post-processor "manifest" {}
 
   post-processor "vagrant" {
-    output = "${path.root}/../images/bfee-ubuntu-${local.edition}-vagrantVbox-barePreseed.box"
+    output = "${path.root}/../images/bfee-ubuntu-${local.edition}-${local.virtualization-type}-${local.configuration}.box"
   }
 
   post-processor "shell-local" {
     inline = [
-      "mv -f ${path.root}/packer-manifest.json ${path.root}/../images/bfee-ubuntu-${local.edition}-vagrantVbox-barePreseed-manifest.json",
+      "mv -f ${path.root}/packer-manifest.json ${path.root}/../images/bfee-ubuntu-${local.edition}-${local.virtualization-type}-${local.configuration}-manifest.json",
     ]
   }
 }

@@ -36,12 +36,3 @@ distro=$(lsb_release -i -s | tr '[:upper:]' '[:lower:]')
 if [ "${distro}" == "debian" ]; then
   DEBIAN_FRONTEND=noninteractive apt-get install -y linux-headers-"$(uname -r)"
 fi
-
-# Need to force a re-install of pip to fix an issue on debian stable, shouldn't hurt on
-# other distros (this might be able to removed after Debian Bullseye is stable, needs testing)
-[ ! -f "/tmp/get-pip.py" ] && curl -sSL https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py
-# For the system
-/usr/bin/python3 /tmp/get-pip.py
-# Also as the user, can't use $USER as we are running this script as root/sudo
-current_user=$(logname)
-runuser --shell=/bin/bash "${current_user}" -c "/usr/bin/python3 /tmp/get-pip.py --user"

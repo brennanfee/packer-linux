@@ -29,11 +29,6 @@ if [ "${in_virtualbox}" -ge 1 ]; then
   distro=$(lsb_release -i -s | tr '[:upper:]' '[:lower:]')
 
   if [ "${distro}" = "debian" ]; then
-    # Need to manually place the startup.nsh file so Debian can boot correctly
-    if [ ! -f /boot/efi/startup.nsh ]; then
-      echo "\EFI\debian\grubx64.efi" > /boot/efi/startup.nsh
-    fi
-
     # Need to ensure the linux headers are installed so it can compile the module
     DEBIAN_FRONTEND=noninteractive apt-get install -y linux-headers-"$(uname -r)"
   fi
@@ -59,7 +54,7 @@ if [ "${in_virtualbox}" -ge 1 ]; then
 
   # Mount the ISO and run the install
   mkdir /media/vb-additions
-  mount /home/"${current_user}"/VBoxGuestAdditions.iso /media/vb-additions -o loop
+  mount -t iso9660 -o loop,ro /home/"${current_user}"/VBoxGuestAdditions.iso /media/vb-additions
   /media/vb-additions/VBoxLinuxAdditions.run --nox11 || true
   umount /media/vb-additions
   rmdir /media/vb-additions

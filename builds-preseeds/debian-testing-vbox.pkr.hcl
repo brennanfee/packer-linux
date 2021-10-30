@@ -9,34 +9,39 @@ packer {
 
 variable "hostname" {
   type    = string
-  default = "ubuntu"
+  default = "debian"
+}
+
+variable "domain" {
+  type    = string
+  default = "bfee.org"
 }
 
 variable "username" {
   type    = string
-  default = "ubuntu"
+  default = "debian"
 }
 
 variable "password" {
   type    = string
-  default = "ubuntu"
+  default = "debian"
 }
 
 locals {
   virtualization-type = "vbox"
   configuration = "barePreseed"
 
-  edition = "lts"
-  version = "20.04.3"
+  edition = "testing"
+  version = "11.1.0"
 }
 
-source "virtualbox-iso" "ubuntu-preseed" {
+source "virtualbox-iso" "debian-preseed" {
   format        = "ova"
   iso_interface = "sata"
 
   headless = true
 
-  http_directory   = "${path.root}/http/ubuntu"
+  http_directory   = "${path.root}/http/debian"
   output_directory = "${path.root}/output"
 
   communicator           = "ssh"
@@ -50,7 +55,7 @@ source "virtualbox-iso" "ubuntu-preseed" {
   guest_additions_mode = "upload"
 
   # Machine configurations
-  guest_os_type = "Ubuntu_64"
+  guest_os_type = "Debian_64"
   # Must use SATA as VirtualBox doesn't currently support export of NVME disks
   hard_drive_interface     = "sata"
   hard_drive_discard       = true
@@ -93,25 +98,29 @@ source "virtualbox-iso" "ubuntu-preseed" {
 
   boot_wait = "3s"
   boot_command = [
-    "c<wait3> ",
-    "linux /casper/vmlinuz ",
-    "\"ds=nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/\" ",
+    "<wait>c<wait3> ",
+    "linux /install.amd/vmlinuz ",
+    "auto=true ",
+    "priority=critical ",
+    "url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/debian11.cfg ",
+    "AUTO_EDITION=${local.edition} ",
     "AUTO_HOSTNAME=${var.hostname} ",
+    "AUTO_DOMAIN=${var.domain} ",
     "AUTO_USERNAME=${var.username} ",
     "AUTO_PASSWORD=${var.password} ",
-    "quiet autoinstall ---<enter>",
-    "initrd /casper/initrd<enter>",
-    "boot<enter>"
+    "vga=788 noprompt quiet --<enter>",
+    "initrd /install.amd/initrd.gz<enter>",
+    "boot<enter>",
   ]
 }
 
 build {
-  source "sources.virtualbox-iso.ubuntu-preseed" {
+  source "sources.virtualbox-iso.debian-preseed" {
     keep_registered = false
     skip_export     = false
-    vm_name         = "bfee-ubuntu-${local.edition}-${local.virtualization-type}-${local.configuration}"
-    iso_url         = "https://releases.ubuntu.com/${local.version}/ubuntu-${local.version}-live-server-amd64.iso"
-    iso_checksum    = "file:https://releases.ubuntu.com/${local.version}/SHA256SUMS"
+    vm_name         = "bfee-debian-${local.edition}-${local.virtualization-type}-${local.configuration}"
+    iso_url         = "https://cdimage.debian.org/images/unofficial/non-free/images-including-firmware/weekly-builds/amd64/iso-cd/firmware-testing-amd64-netinst.iso"
+    iso_checksum    = "file:https://cdimage.debian.org/images/unofficial/non-free/images-including-firmware/weekly-builds/amd64/iso-cd/SHA256SUMS"
   }
 
   provisioner "shell" {
@@ -121,7 +130,6 @@ build {
       "${path.root}/../scripts/basePackages.bash",
       "${path.root}/../scripts/setupSvcUser.bash",
       "${path.root}/../scripts/updates.bash",
-      "${path.root}/../scripts/ubuntu-hwe.bash",
       "${path.root}/../scripts/reboot.sh",
       "${path.root}/../scripts/ansible.bash",
       "${path.root}/../scripts/virtualbox.bash",
@@ -139,7 +147,7 @@ build {
   post-processor "shell-local" {
     inline = [
       "mv -f ${path.root}/output/*.ova ${path.root}/../images/",
-      "mv -f ${path.root}/packer-manifest.json ${path.root}/../images/bfee-ubuntu-${local.edition}-${local.virtualization-type}-${local.configuration}-manifest.json",
+      "mv -f ${path.root}/packer-manifest.json ${path.root}/../images/bfee-debian-${local.edition}-${local.virtualization-type}-${local.configuration}-manifest.json",
     ]
   }
 }

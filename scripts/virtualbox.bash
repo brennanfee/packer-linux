@@ -32,15 +32,23 @@ if [ "${in_virtualbox}" -ge 1 ]; then
     # Need to ensure the linux headers are installed so it can compile the module
     DEBIAN_FRONTEND=noninteractive apt-get install -y linux-headers-"$(uname -r)"
 
-    # If a UEFI install, fix the EFI boot list
+    # If a UEFI install, fix the EFI boot
     if [[ -d "/boot/efi/" ]]; then
+      if [[ ! -f "/boot/efi/startup.nsh" ]]; then
+        echo "FS0:" > /boot/efi/startup.nsh
+        echo "\EFI\debian\grubx64.efi" >> /boot/efi/startup.nsh
+      fi
+
       DEBIAN_FRONTEND=noninteractive apt-get install -y efibootmgr
 
-      efi_device=$(df -P /boot/efi | awk 'END{print $1}')
-      efi_disk="/dev/$(lsblk -n -o PKNAME,PATH | grep -i "${efi_device}" | cut -d' ' -f 1)"
-      efi_part="$(udevadm info --query=property --name="${efi_device}" | grep -i ID_PART_ENTRY_NUM |cut -d= -f 2)"
+      if ! efibootmgr | grep -i -q '\* debian'
+      then
+        efi_device=$(df -P /boot/efi | awk 'END{print $1}')
+        efi_disk="/dev/$(lsblk -n -o PKNAME,PATH | grep -i "${efi_device}" | cut -d' ' -f 1)"
+        efi_part="$(udevadm info --query=property --name="${efi_device}" | grep -i ID_PART_ENTRY_NUM |cut -d= -f 2)"
 
-      efibootmgr -c -d "${efi_disk}" -p "${efi_part}" -l '\EFI\debian\grubx64.efi' -L 'debian'
+        efibootmgr -c -d "${efi_disk}" -p "${efi_part}" -l '\EFI\debian\grubx64.efi' -L 'debian'
+      fi
     fi
   fi
 

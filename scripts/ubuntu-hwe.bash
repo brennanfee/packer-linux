@@ -34,8 +34,8 @@ if [ "${distro}" = "ubuntu" ]; then
   HWE_PKG_EXISTS=$(apt-cache search --names-only "^${HWE_KERNEL_PKG}$" | wc -l)
 
   if [ "${EDGE_PKG_EXISTS}" -eq 1 ]; then
-    DEBIAN_FRONTEND=noninteractive apt-get -y -q install "${HWE_KERNEL_EDGE_PKG}"
+    DEBIAN_FRONTEND=noninteractive apt-get -y -q --no-install-recommends install "${HWE_KERNEL_EDGE_PKG}"
   elif [ "${HWE_PKG_EXISTS}" -eq 1 ]; then
-    DEBIAN_FRONTEND=noninteractive apt-get -y -q install "${HWE_KERNEL_PKG}"
+    DEBIAN_FRONTEND=noninteractive apt-get -y -q --no-install-recommends install "${HWE_KERNEL_PKG}"
   fi
 fi

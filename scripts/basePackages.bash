@@ -23,16 +23,24 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
+# Common installs
 if command -v apt-get &> /dev/null
 then
   DEBIAN_FRONTEND=noninteractive apt-get -y -q update
 
-  DEBIAN_FRONTEND=noninteractive apt-get -y -q install apt-transport-https ca-certificates curl wget gnupg lsb-release build-essential dkms sudo acl git vim-nox python3-dev python3-setuptools python3-wheel python3-keyring python3-venv python3-pip python-is-python3 software-properties-common
+  DEBIAN_FRONTEND=noninteractive apt-get -y -q --no-install-recommends install apt-transport-https ca-certificates curl wget gnupg lsb-release build-essential dkms sudo acl git vim-nox python3-dev python3-setuptools python3-wheel python3-keyring python3-venv python3-pip python-is-python3 software-properties-common
 
   DEBIAN_FRONTEND=noninteractive apt-get -y -q autoremove
 fi
 
+# Distro specific installs
 distro=$(lsb_release -i -s | tr '[:upper:]' '[:lower:]')
 if [ "${distro}" == "debian" ]; then
-  DEBIAN_FRONTEND=noninteractive apt-get install -y linux-headers-"$(uname -r)"
+  DEBIAN_FRONTEND=noninteractive apt-get -y -q --no-install-recommends install linux-headers-"$(uname -r)"
+
+  DEBIAN_FRONTEND=noninteractive apt-get -y -q --no-install-recommends install task-ssh-server
+fi
+
+if [ "${distro}" == "ubuntu" ]; then
+  DEBIAN_FRONTEND=noninteractive apt-get -y -q --no-install-recommends install openssh-server openssh-client
 fi

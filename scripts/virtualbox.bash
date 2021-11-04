@@ -30,7 +30,7 @@ if [ "${in_virtualbox}" -ge 1 ]; then
 
   if [ "${distro}" = "debian" ]; then
     # Need to ensure the linux headers are installed so it can compile the module
-    DEBIAN_FRONTEND=noninteractive apt-get install -y linux-headers-"$(uname -r)"
+    DEBIAN_FRONTEND=noninteractive apt-get install -y -q --no-install-recommends linux-headers-"$(uname -r)"
 
     # If a UEFI install, fix the EFI boot
     if [[ -d "/boot/efi/" ]]; then
@@ -39,7 +39,7 @@ if [ "${in_virtualbox}" -ge 1 ]; then
         echo "\EFI\debian\grubx64.efi" >> /boot/efi/startup.nsh
       fi
 
-      DEBIAN_FRONTEND=noninteractive apt-get install -y efibootmgr
+      DEBIAN_FRONTEND=noninteractive apt-get install -y -q --no-install-recommends efibootmgr
 
       if ! efibootmgr | grep -i -q '\* debian'
       then

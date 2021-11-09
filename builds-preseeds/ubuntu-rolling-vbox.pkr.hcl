@@ -28,6 +28,8 @@ locals {
 
   edition = "rolling"
   version = "21.10"
+
+  script_branch = "develop"
 }
 
 source "virtualbox-iso" "ubuntu-preseed" {
@@ -36,7 +38,6 @@ source "virtualbox-iso" "ubuntu-preseed" {
 
   headless = true
 
-  http_directory   = "${path.root}/http/ubuntu"
   output_directory = "${path.root}/output"
 
   communicator           = "ssh"
@@ -69,8 +70,6 @@ source "virtualbox-iso" "ubuntu-preseed" {
   audio_controller         = "hda"
   sound                    = "pulse"
 
-  # disk_additional_size = [102400]
-
   vboxmanage = [
     ["modifyvm", "{{.Name}}", "--paravirtprovider", "default"],
     ["modifyvm", "{{.Name}}", "--pae", "on"],
@@ -95,7 +94,7 @@ source "virtualbox-iso" "ubuntu-preseed" {
   boot_command = [
     "c<wait3> ",
     "linux /casper/vmlinuz ",
-    "\"ds=nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/\" ",
+    "\"ds=nocloud-net;s=https://raw.githubusercontent.com/brennanfee/linux-bootstraps/${local.script_branch}/preseeds/ubuntu/\" ",
     "AUTO_HOSTNAME=${var.hostname} ",
     "AUTO_USERNAME=${var.username} ",
     "AUTO_PASSWORD=${var.password} ",
@@ -116,22 +115,39 @@ build {
 
   provisioner "shell" {
     execute_command = "echo '${var.password}' | {{.Vars}} sudo -S -H -E bash -c '{{.Path}}'"
-    scripts = [
-      "${path.root}/../scripts/setupDataDir.bash",
-      "${path.root}/../scripts/basePackages.bash",
-      "${path.root}/../scripts/setupSvcUser.bash",
-      "${path.root}/../scripts/updates.bash",
-      "${path.root}/../scripts/ubuntu-hwe.bash",
-      "${path.root}/../scripts/reboot.sh",
-      "${path.root}/../scripts/ansible.bash",
-      "${path.root}/../scripts/virtualbox.bash",
-      "${path.root}/../scripts/reboot.sh",
-      "${path.root}/../scripts/vagrant.bash",
-      "${path.root}/../scripts/setupGroups.bash",
-      "${path.root}/../scripts/stamp.bash",
-      "${path.root}/../scripts/minimize.bash"
-    ]
     expect_disconnect = true
+    inline = [
+      "export BASE_URL='https://raw.githubusercontent.com/brennanfee/linux-bootstraps/${local.script_branch}/post-install-scripts'",
+      "curl -fsSL $BASE_URL/setupDataDir.bash | bash",
+      "curl -fsSL $BASE_URL/basePackages.bash | bash",
+      "curl -fsSL $BASE_URL/setupSvcUser.bash | bash",
+      "curl -fsSL $BASE_URL/updates.bash | bash",
+      "curl -fsSL $BASE_URL/ubuntu-hwe.bash | bash",
+      "curl -fsSL $BASE_URL/reboot.sh | bash",
+    ]
+  }
+
+  provisioner "shell" {
+    execute_command = "echo '${var.password}' | {{.Vars}} sudo -S -H -E bash -c '{{.Path}}'"
+    expect_disconnect = true
+    inline = [
+      "export BASE_URL='https://raw.githubusercontent.com/brennanfee/linux-bootstraps/${local.script_branch}/post-install-scripts'",
+      "curl -fsSL $BASE_URL/ansible.bash | bash",
+      "curl -fsSL $BASE_URL/virtualbox.bash | bash",
+      "curl -fsSL $BASE_URL/reboot.sh | bash",
+    ]
+  }
+
+  provisioner "shell" {
+    execute_command = "echo '${var.password}' | {{.Vars}} sudo -S -H -E bash -c '{{.Path}}'"
+    expect_disconnect = true
+    inline = [
+      "export BASE_URL='https://raw.githubusercontent.com/brennanfee/linux-bootstraps/${local.script_branch}/post-install-scripts'",
+      "curl -fsSL $BASE_URL/vagrant.bash | bash",
+      "curl -fsSL $BASE_URL/setupGroups.bash | bash",
+      "curl -fsSL $BASE_URL/stamp.bash | bash",
+      "curl -fsSL $BASE_URL/minimize.bash | bash",
+    ]
   }
 
   post-processor "manifest" {}

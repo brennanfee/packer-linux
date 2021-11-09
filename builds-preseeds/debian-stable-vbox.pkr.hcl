@@ -14,7 +14,7 @@ variable "hostname" {
 
 variable "domain" {
   type    = string
-  default = "bfee.org"
+  default = "fee.house"
 }
 
 variable "username" {
@@ -33,6 +33,8 @@ locals {
 
   edition = "stable"
   version = "11.1.0"
+
+  script_branch = "develop"
 }
 
 source "virtualbox-iso" "debian-preseed" {
@@ -41,7 +43,6 @@ source "virtualbox-iso" "debian-preseed" {
 
   headless = true
 
-  http_directory   = "${path.root}/http/debian"
   output_directory = "${path.root}/output"
 
   communicator           = "ssh"
@@ -74,8 +75,6 @@ source "virtualbox-iso" "debian-preseed" {
   audio_controller         = "hda"
   sound                    = "pulse"
 
-  # disk_additional_size = [102400]
-
   vboxmanage = [
     ["modifyvm", "{{.Name}}", "--paravirtprovider", "default"],
     ["modifyvm", "{{.Name}}", "--pae", "on"],
@@ -102,7 +101,7 @@ source "virtualbox-iso" "debian-preseed" {
     "linux /install.amd/vmlinuz ",
     "auto=true ",
     "priority=critical ",
-    "url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/debian11.cfg ",
+    "url=https://raw.githubusercontent.com/brennanfee/linux-bootstraps/${local.script_branch}/preseeds/debian/./debian11.cfg ",
     "AUTO_EDITION=${local.edition} ",
     "AUTO_HOSTNAME=${var.hostname} ",
     "AUTO_DOMAIN=${var.domain} ",
@@ -125,21 +124,38 @@ build {
 
   provisioner "shell" {
     execute_command = "echo '${var.password}' | {{.Vars}} sudo -S -H -E bash -c '{{.Path}}'"
-    scripts = [
-      "${path.root}/../scripts/setupDataDir.bash",
-      "${path.root}/../scripts/basePackages.bash",
-      "${path.root}/../scripts/setupSvcUser.bash",
-      "${path.root}/../scripts/updates.bash",
-      "${path.root}/../scripts/reboot.sh",
-      "${path.root}/../scripts/ansible.bash",
-      "${path.root}/../scripts/virtualbox.bash",
-      "${path.root}/../scripts/reboot.sh",
-      "${path.root}/../scripts/vagrant.bash",
-      "${path.root}/../scripts/setupGroups.bash",
-      "${path.root}/../scripts/stamp.bash",
-      "${path.root}/../scripts/minimize.bash"
-    ]
     expect_disconnect = true
+    inline = [
+      "export BASE_URL='https://raw.githubusercontent.com/brennanfee/linux-bootstraps/${local.script_branch}/post-install-scripts'",
+      "curl -fsSL $BASE_URL/setupDataDir.bash | bash",
+      "curl -fsSL $BASE_URL/basePackages.bash | bash",
+      "curl -fsSL $BASE_URL/setupSvcUser.bash | bash",
+      "curl -fsSL $BASE_URL/updates.bash | bash",
+      "curl -fsSL $BASE_URL/reboot.sh | bash",
+    ]
+  }
+
+  provisioner "shell" {
+    execute_command = "echo '${var.password}' | {{.Vars}} sudo -S -H -E bash -c '{{.Path}}'"
+    expect_disconnect = true
+    inline = [
+      "export BASE_URL='https://raw.githubusercontent.com/brennanfee/linux-bootstraps/${local.script_branch}/post-install-scripts'",
+      "curl -fsSL $BASE_URL/ansible.bash | bash",
+      "curl -fsSL $BASE_URL/virtualbox.bash | bash",
+      "curl -fsSL $BASE_URL/reboot.sh | bash",
+    ]
+  }
+
+  provisioner "shell" {
+    execute_command = "echo '${var.password}' | {{.Vars}} sudo -S -H -E bash -c '{{.Path}}'"
+    expect_disconnect = true
+    inline = [
+      "export BASE_URL='https://raw.githubusercontent.com/brennanfee/linux-bootstraps/${local.script_branch}/post-install-scripts'",
+      "curl -fsSL $BASE_URL/vagrant.bash | bash",
+      "curl -fsSL $BASE_URL/setupGroups.bash | bash",
+      "curl -fsSL $BASE_URL/stamp.bash | bash",
+      "curl -fsSL $BASE_URL/minimize.bash | bash",
+    ]
   }
 
   post-processor "manifest" {}

@@ -36,7 +36,7 @@ fi
 # Distro specific installs
 distro=$(lsb_release -i -s | tr '[:upper:]' '[:lower:]')
 if [ "${distro}" == "debian" ]; then
-  DEBIAN_FRONTEND=noninteractive apt-get -y -q --no-install-recommends install linux-headers-"$(uname -r)"
+  DEBIAN_FRONTEND=noninteractive apt-get -y -q --no-install-recommends install linux-image-amd64 linux-headers-amd64
 
   DEBIAN_FRONTEND=noninteractive apt-get -y -q --no-install-recommends install task-ssh-server
 fi

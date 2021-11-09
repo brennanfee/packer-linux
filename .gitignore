@@ -1,5 +1,5 @@
-# Created by https://www.toptal.com/developers/gitignore/api/linux,windows,macos,backup,vim,visualstudiocode,packer,vagrant,ansible
-# Edit at https://www.toptal.com/developers/gitignore?templates=linux,windows,macos,backup,vim,visualstudiocode,packer,vagrant,ansible
+# Created by https://www.toptal.com/developers/gitignore/api/linux,windows,macos,backup,vim,emacs,visualstudiocode,packer,vagrant,ansible
+# Edit at https://www.toptal.com/developers/gitignore?templates=linux,windows,macos,backup,vim,emacs,visualstudiocode,packer,vagrant,ansible
 
 ### Ansible ###
 *.retry
@@ -11,8 +11,57 @@
 *.orig
 *.tmp
 
-### Linux ###
+### Emacs ###
+# -*- mode: gitignore; -*-
 *~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Org-mode
+.org-id-locations
+*_archive
+
+# flymake-mode
+*_flymake.*
+
+# eshell files
+/eshell/history
+/eshell/lastdir
+
+# elpa packages
+/elpa/
+
+# reftex files
+*.rel
+
+# AUCTeX auto folder
+/auto/
+
+# cask packages
+.cask/
+dist/
+
+# Flycheck
+flycheck_*.el
+
+# server auth directory
+/server/
+
+# projectiles files
+.projectile
+
+# directory configuration
+.dir-locals.el
+
+# network security
+/network-security.data
+
+### Linux ###
 
 # temporary files which can be created if a process still has a handle open of a deleted file
 .fuse_hidden*
@@ -64,6 +113,10 @@ crash.log
 # For built boxes
 *.box
 
+### Packer Patch ###
+# ignore temporary output files
+output-*/
+
 ### Vagrant ###
 # General
 .vagrant/
@@ -95,14 +148,22 @@ tags
 
 ### VisualStudioCode ###
 .vscode/*
+!.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
+!.vscode/extensions.json
 *.code-workspace
+
+# Local History for Visual Studio Code
+.history/
 
 ### VisualStudioCode Patch ###
 # Ignore all local history of files
 .history
 .ionide
+
+# Support for Project snippet scope
+!.vscode/*.code-snippets
 
 ### Windows ###
 # Windows thumbnail cache files
@@ -130,11 +191,9 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.toptal.com/developers/gitignore/api/linux,windows,macos,backup,vim,visualstudiocode,packer,vagrant,ansible
+# End of https://www.toptal.com/developers/gitignore/api/linux,windows,macos,backup,vim,emacs,visualstudiocode,packer,vagrant,ansible
 
 ###### Custom project specific overrides ######
-# Packer uses a temporary folder for build output, even though they are temporary and get removed,
-# I don't want to accidentally get them added to the repo
-output-*/
 logs/
 images/
+.vscode/bookmarks.json

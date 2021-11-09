@@ -30,7 +30,7 @@ if [ "${in_virtualbox}" -ge 1 ]; then
 
   if [ "${distro}" = "debian" ]; then
     # Need to ensure the linux headers are installed so it can compile the module
-    DEBIAN_FRONTEND=noninteractive apt-get install -y -q --no-install-recommends linux-headers-"$(uname -r)"
+    DEBIAN_FRONTEND=noninteractive apt-get install -y -q --no-install-recommends linux-image-amd64 linux-headers-amd64
 
     # If a UEFI install, fix the EFI boot
     if [[ -d "/boot/efi/" ]]; then

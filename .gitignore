@@ -196,3 +196,4 @@ $RECYCLE.BIN/
 ###### Custom project specific overrides ######
 logs/
 images/
+output/

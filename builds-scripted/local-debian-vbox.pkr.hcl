@@ -22,9 +22,11 @@ locals {
   configuration = "bare"
 
   edition = "stable"
-  version = "11.1.0"
+  version = "11.2.0"
 
   script_branch = "develop"
+
+  common-config = "confirm-smallest-largest-not_encrypted.bash"
 }
 
 source "virtualbox-iso" "debian-scripted" {
@@ -91,17 +93,15 @@ source "virtualbox-iso" "debian-scripted" {
   boot_wait = "3s"
   boot_command = [
     "c<wait3>",
-    "linux /live/vmlinuz-5.10.0-9-amd64 boot=live noeject noprompt toram components splash quiet --<enter>",
-    "initrd /live/initrd.img-5.10.0-9-amd64<enter>",
+    "linux /live/vmlinuz-5.10.0-10-amd64 boot=live noeject noprompt components splash quiet --<enter>",
+    "initrd /live/initrd.img-5.10.0-10-amd64<enter>",
     "boot<enter><wait30>",
-    "/usr/bin/wget http://{{ .HTTPIP }}:{{ .HTTPPort }}/deb-install.bash <enter><wait5>",
     "sudo su <enter>",
-    "eject -F /dev/cdrom <enter>",
-    "export AUTO_INSTALL=1 <enter>",
-    "export AUTO_ENCRYPT_DISKS=no <enter>",
-    "export AUTO_ROOT_DISABLED=no <enter>",
-    "export AUTO_CREATE_USER=no <enter>",
-    "/usr/bin/bash ./deb-install.bash<enter>"
+    "/usr/bin/wget http://{{ .HTTPIP }}:{{ .HTTPPort }}/deb-install.bash <enter><wait5>",
+    "/usr/bin/wget -O config.bash http://{{ .HTTPIP }}:{{ .HTTPPort }}/common-configs/${local.common-config}<enter><wait5>",
+    "source ./config.bash<enter>",
+    "export AUTO_REBOOT=yes <enter>",
+    "/usr/bin/bash ./deb-install.bash<enter>",
   ]
 }
 

@@ -19,14 +19,13 @@ variable "password" {
 
 locals {
   virtualization-type = "vbox"
-  configuration = "bare"
+  configuration = "dualBare"
 
-  edition = "stable"
-  version = "11.2.0"
+  iso_version = "11.4.0"
 
-  script_branch = "develop"
-
-  common-config = "confirm-smallest-largest-not_encrypted.bash"
+  script_branch = "main"
+  edition = "testing"
+  config-script = "debian-my-configs/auto-${local.edition}-multiDisk.bash"
 }
 
 source "virtualbox-iso" "debian-scripted" {
@@ -35,6 +34,7 @@ source "virtualbox-iso" "debian-scripted" {
 
   headless        = false
 
+  http_directory   = "${path.root}/../../linux-bootstraps/scripted-installer/debian/"
   output_directory = "${path.root}/output"
 
   communicator = "ssh"
@@ -67,7 +67,7 @@ source "virtualbox-iso" "debian-scripted" {
   audio_controller         = "hda"
   sound                    = "pulse"
 
-  # disk_additional_size = [102400]
+  disk_additional_size = [102400]
 
   vboxmanage = [
     ["modifyvm", "{{.Name}}", "--paravirtprovider", "default"],
@@ -92,15 +92,16 @@ source "virtualbox-iso" "debian-scripted" {
   boot_wait = "3s"
   boot_command = [
     "c<wait3>",
-    "linux /live/vmlinuz-5.10.0-10-amd64 boot=live noeject noprompt components splash quiet --<enter>",
-    "initrd /live/initrd.img-5.10.0-10-amd64<enter>",
+    "linux /live/vmlinuz-5.10.0-16-amd64 boot=live noeject noprompt components splash quiet --<enter>",
+    "initrd /live/initrd.img-5.10.0-16-amd64<enter>",
     "boot<enter><wait30>",
     "sudo su <enter>",
-    "/usr/bin/wget https://raw.githubusercontent.com/brennanfee/linux-bootstraps/${local.script_branch}/scripted-installer/debian/deb-install.bash <enter><wait5>",
-    "/usr/bin/wget -O config.bash https://raw.githubusercontent.com/brennanfee/linux-bootstraps/${local.script_branch}/scripted-installer/debian/common-configs/${local.common-config} <enter><wait5>",
-    "source ./config.bash<enter>",
-    "export AUTO_REBOOT=yes <enter>",
-    "/usr/bin/bash ./deb-install.bash<enter>",
+    "/usr/bin/wget -O config.bash http://{{ .HTTPIP }}:{{ .HTTPPort }}/${local.config-script}<enter><wait5>",
+#    "export AUTO_IS_DEBUG=0 <enter>",
+    "export AUTO_REBOOT=1 <enter>",
+    "export AUTO_USERNAME=debian <enter>",
+#    "export AUTO_ENCRYPT_DISKS=0 <enter>",
+    "/usr/bin/bash ./config.bash<enter>",
   ]
 }
 
@@ -109,18 +110,18 @@ build {
     keep_registered = true
     skip_export     = true
     vm_name         = "bfee-debian-${local.edition}-${local.virtualization-type}-${local.configuration}"
-    iso_url         = "https://cdimage.debian.org/images/unofficial/non-free/images-including-firmware/${local.version}-live+nonfree/amd64/iso-hybrid/debian-live-${local.version}-amd64-standard+nonfree.iso"
-    iso_checksum    = "file:https://cdimage.debian.org/images/unofficial/non-free/images-including-firmware/${local.version}-live+nonfree/amd64/iso-hybrid/SHA256SUMS"
+    iso_url         = "https://cdimage.debian.org/images/unofficial/non-free/images-including-firmware/${local.iso_version}-live+nonfree/amd64/iso-hybrid/debian-live-${local.iso_version}-amd64-standard+nonfree.iso"
+    iso_checksum    = "file:https://cdimage.debian.org/images/unofficial/non-free/images-including-firmware/${local.iso_version}-live+nonfree/amd64/iso-hybrid/SHA256SUMS"
   }
 
-  # Should always be the last provisioner
-  # provisioner "shell" {
-  #   execute_command = "echo '${var.password}' | {{.Vars}} sudo -S -H -E bash -c '{{.Path}}'"
-  #   scripts = [
-  #     "${path.root}/../scripts/stamp.bash",
-  #     "${path.root}/../scripts/minimize.bash"
-  #   ]
-  # }
+  #Should always be the last provisioner
+  provisioner "shell" {
+    execute_command = "echo '${var.password}' | {{.Vars}} sudo -S -H -E bash -c '{{.Path}}'"
+    scripts = [
+      "${path.root}/../../linux-bootstraps/post-install-scripts/stamp.bash",
+      "${path.root}/../../linux-bootstraps/post-install-scripts/minimize.bash",
+    ]
+  }
 
   # post-processor "manifest" {}
 

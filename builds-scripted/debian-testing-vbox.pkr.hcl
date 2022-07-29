@@ -34,7 +34,6 @@ source "virtualbox-iso" "debian-scripted" {
 
   headless        = false
 
-  http_directory   = "${path.root}/../../linux-bootstraps/scripted-installer/debian/"
   output_directory = "${path.root}/output"
 
   communicator = "ssh"
@@ -96,19 +95,18 @@ source "virtualbox-iso" "debian-scripted" {
     "initrd /live/initrd.img-5.10.0-16-amd64<enter>",
     "boot<enter><wait30>",
     "sudo su <enter>",
-    "/usr/bin/wget -O config.bash http://{{ .HTTPIP }}:{{ .HTTPPort }}/${local.config-script}<enter><wait5>",
-#    "export AUTO_IS_DEBUG=0 <enter>",
+    "/usr/bin/wget -O config.bash https://raw.githubusercontent.com/brennanfee/linux-bootstraps/${local.script_branch}/scripted-installer/debian/${local.config-script} <enter><wait5>",
     "export AUTO_REBOOT=1 <enter>",
     "export AUTO_USERNAME=debian <enter>",
-#    "export AUTO_ENCRYPT_DISKS=0 <enter>",
+    "export AUTO_ENCRYPT_DISKS=0 <enter>",
     "/usr/bin/bash ./config.bash<enter>",
   ]
 }
 
 build {
   source "sources.virtualbox-iso.debian-scripted" {
-    keep_registered = true
-    skip_export     = true
+    keep_registered = false
+    skip_export     = false
     vm_name         = "bfee-debian-${local.edition}-${local.virtualization-type}-${local.configuration}"
     iso_url         = "https://cdimage.debian.org/images/unofficial/non-free/images-including-firmware/${local.iso_version}-live+nonfree/amd64/iso-hybrid/debian-live-${local.iso_version}-amd64-standard+nonfree.iso"
     iso_checksum    = "file:https://cdimage.debian.org/images/unofficial/non-free/images-including-firmware/${local.iso_version}-live+nonfree/amd64/iso-hybrid/SHA256SUMS"

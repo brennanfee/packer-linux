@@ -114,12 +114,12 @@ build {
     iso_checksum    = "file:https://cdimage.debian.org/images/unofficial/non-free/images-including-firmware/${local.iso_version}-live+nonfree/amd64/iso-hybrid/SHA256SUMS"
   }
 
-  #Should always be the last provisioner
+  # Should always be the last provisioner
   provisioner "shell" {
     execute_command = "echo '${var.password}' | {{.Vars}} sudo -S -H -E bash -c '{{.Path}}'"
     scripts = [
-      "${path.root}/../../linux-bootstraps/post-install-scripts/stamp.bash",
-      "${path.root}/../../linux-bootstraps/post-install-scripts/minimize.bash",
+      "${path.root}/../post-install-scripts/stamp.bash",
+      "${path.root}/../post-install-scripts/minimize.bash",
     ]
   }
 

@@ -116,8 +116,8 @@ build {
   provisioner "shell" {
     execute_command = "echo '${var.password}' | {{.Vars}} sudo -S -H -E bash -c '{{.Path}}'"
     scripts = [
-      "${path.root}/../../linux-bootstraps/post-install-scripts/stamp.bash",
-      "${path.root}/../../linux-bootstraps/post-install-scripts/minimize.bash",
+      "${path.root}/../post-install-scripts/stamp.bash",
+      "${path.root}/../post-install-scripts/minimize.bash",
     ]
   }
 

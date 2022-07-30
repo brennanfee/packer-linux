@@ -116,37 +116,20 @@ build {
   provisioner "shell" {
     execute_command = "echo '${var.password}' | {{.Vars}} sudo -S -H -E bash -c '{{.Path}}'"
     expect_disconnect = true
-    inline = [
-      "export BASE_URL='https://raw.githubusercontent.com/brennanfee/linux-bootstraps/${local.script_branch}/post-install-scripts'",
-      "curl -fsSL $BASE_URL/setupDataDir.bash | bash",
-      "curl -fsSL $BASE_URL/basePackages.bash | bash",
-      "curl -fsSL $BASE_URL/setupSvcUser.bash | bash",
-      "curl -fsSL $BASE_URL/updates.bash | bash",
-      "curl -fsSL $BASE_URL/ubuntu-hwe.bash | bash",
-      "curl -fsSL $BASE_URL/reboot.sh | bash",
+    scripts = [
+      "${path.root}/../post-install-scripts/setupDataDir.bash",
+      "${path.root}/../post-install-scripts/virtualbox.bash",
+      "${path.root}/../post-install-scripts/vagrant.bash",
+      "${path.root}/../post-install-scripts/reboot.sh",
     ]
   }
 
   provisioner "shell" {
     execute_command = "echo '${var.password}' | {{.Vars}} sudo -S -H -E bash -c '{{.Path}}'"
     expect_disconnect = true
-    inline = [
-      "export BASE_URL='https://raw.githubusercontent.com/brennanfee/linux-bootstraps/${local.script_branch}/post-install-scripts'",
-      "curl -fsSL $BASE_URL/ansible.bash | bash",
-      "curl -fsSL $BASE_URL/virtualbox.bash | bash",
-      "curl -fsSL $BASE_URL/reboot.sh | bash",
-    ]
-  }
-
-  provisioner "shell" {
-    execute_command = "echo '${var.password}' | {{.Vars}} sudo -S -H -E bash -c '{{.Path}}'"
-    expect_disconnect = true
-    inline = [
-      "export BASE_URL='https://raw.githubusercontent.com/brennanfee/linux-bootstraps/${local.script_branch}/post-install-scripts'",
-      "curl -fsSL $BASE_URL/vagrant.bash | bash",
-      "curl -fsSL $BASE_URL/setupGroups.bash | bash",
-      "curl -fsSL $BASE_URL/stamp.bash | bash",
-      "curl -fsSL $BASE_URL/minimize.bash | bash",
+    scripts = [
+      "${path.root}/../post-install-scripts/stamp.bash",
+      "${path.root}/../post-install-scripts/minimize.bash",
     ]
   }
 

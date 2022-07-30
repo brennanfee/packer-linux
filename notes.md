@@ -107,6 +107,8 @@ The full convention is as follows:
 
 [test,local]-{{ virtualization platform }}-{{ distribution }}-{{ release or edition }}-{{ configuration }}
 
+The output images will be prefixed with "bfee" for identification purposes.
+
 #### Test & Local Files
 
 The first section is optional and will only be used for the test files (most of which will not produce output).  Local is a special test case that uses local paths to the bootstrap scripts rather than their github location.  This makes doing development on the bootstrap scripts easier.

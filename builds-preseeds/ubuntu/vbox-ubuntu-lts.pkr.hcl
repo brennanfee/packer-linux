@@ -7,11 +7,6 @@ packer {
   }
 }
 
-variable "hostname" {
-  type    = string
-  default = "ubuntu"
-}
-
 variable "username" {
   type    = string
   default = "ubuntu"
@@ -23,13 +18,12 @@ variable "password" {
 }
 
 locals {
-  virtualization-type = "vbox"
   configuration = "barePreseed"
 
-  edition = "lts"
-  version = "20.04.3"
+  edition = "jammy"
+  version = "22.04"
 
-  script_branch = "develop"
+  script_branch = "main"
 }
 
 source "virtualbox-iso" "ubuntu-preseed" {
@@ -95,7 +89,6 @@ source "virtualbox-iso" "ubuntu-preseed" {
     "c<wait3> ",
     "linux /casper/vmlinuz ",
     "\"ds=nocloud-net;s=https://raw.githubusercontent.com/brennanfee/linux-bootstraps/${local.script_branch}/preseeds/ubuntu/\" ",
-    "AUTO_HOSTNAME=${var.hostname} ",
     "AUTO_USERNAME=${var.username} ",
     "AUTO_PASSWORD=${var.password} ",
     "quiet autoinstall ---<enter>",
@@ -108,7 +101,7 @@ build {
   source "sources.virtualbox-iso.ubuntu-preseed" {
     keep_registered = false
     skip_export     = false
-    vm_name         = "bfee-ubuntu-${local.edition}-${local.virtualization-type}-${local.configuration}"
+    vm_name         = "bfee-vbox-ubuntu-${local.edition}-${local.configuration}"
     iso_url         = "https://releases.ubuntu.com/${local.version}/ubuntu-${local.version}-live-server-amd64.iso"
     iso_checksum    = "file:https://releases.ubuntu.com/${local.version}/SHA256SUMS"
   }
@@ -117,10 +110,10 @@ build {
     execute_command = "echo '${var.password}' | {{.Vars}} sudo -S -H -E bash -c '{{.Path}}'"
     expect_disconnect = true
     scripts = [
-      "${path.root}/../post-install-scripts/setupDataDir.bash",
-      "${path.root}/../post-install-scripts/virtualbox.bash",
-      "${path.root}/../post-install-scripts/vagrant.bash",
-      "${path.root}/../post-install-scripts/reboot.sh",
+      "${path.root}/../../post-install-scripts/setupDataDir.bash",
+      "${path.root}/../../post-install-scripts/virtualbox.bash",
+      "${path.root}/../../post-install-scripts/vagrant.bash",
+      "${path.root}/../../post-install-scripts/reboot.sh",
     ]
   }
 
@@ -128,8 +121,8 @@ build {
     execute_command = "echo '${var.password}' | {{.Vars}} sudo -S -H -E bash -c '{{.Path}}'"
     expect_disconnect = true
     scripts = [
-      "${path.root}/../post-install-scripts/stamp.bash",
-      "${path.root}/../post-install-scripts/minimize.bash",
+      "${path.root}/../../post-install-scripts/stamp.bash",
+      "${path.root}/../../post-install-scripts/minimize.bash",
     ]
   }
 
@@ -137,8 +130,8 @@ build {
 
   post-processor "shell-local" {
     inline = [
-      "mv -f ${path.root}/output/*.ova ${path.root}/../images/",
-      "mv -f ${path.root}/packer-manifest.json ${path.root}/../images/bfee-ubuntu-${local.edition}-${local.virtualization-type}-${local.configuration}-manifest.json",
+      "mv -f ${path.root}/output/*.ova ${path.root}/../../images/",
+      "mv -f ${path.root}/packer-manifest.json ${path.root}/../../images/bfee-vbox-ubuntu-${local.edition}-${local.configuration}-manifest.json",
     ]
   }
 }

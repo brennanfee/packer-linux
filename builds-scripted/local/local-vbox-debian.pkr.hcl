@@ -18,8 +18,7 @@ variable "password" {
 }
 
 locals {
-  virtualization-type = "vbox"
-  configuration = "bare"
+  configuration = "test"
 
   iso_version = "11.4.0"
 
@@ -34,7 +33,7 @@ source "virtualbox-iso" "debian-scripted" {
 
   headless        = false
 
-  http_directory   = "${path.root}/../../linux-bootstraps/scripted-installer/debian/"
+  http_directory   = "${path.root}/../../../linux-bootstraps/scripted-installer/debian/"
   output_directory = "${path.root}/output"
 
   communicator = "ssh"
@@ -109,7 +108,7 @@ build {
   source "sources.virtualbox-iso.debian-scripted" {
     keep_registered = true
     skip_export     = true
-    vm_name         = "bfee-debian-${local.edition}-${local.virtualization-type}-${local.configuration}"
+    vm_name         = "bfee-vbox-debian-${local.edition}-${local.configuration}"
     iso_url         = "https://cdimage.debian.org/images/unofficial/non-free/images-including-firmware/${local.iso_version}-live+nonfree/amd64/iso-hybrid/debian-live-${local.iso_version}-amd64-standard+nonfree.iso"
     iso_checksum    = "file:https://cdimage.debian.org/images/unofficial/non-free/images-including-firmware/${local.iso_version}-live+nonfree/amd64/iso-hybrid/SHA256SUMS"
   }
@@ -118,8 +117,8 @@ build {
   provisioner "shell" {
     execute_command = "echo '${var.password}' | {{.Vars}} sudo -S -H -E bash -c '{{.Path}}'"
     scripts = [
-      "${path.root}/../post-install-scripts/stamp.bash",
-      "${path.root}/../post-install-scripts/minimize.bash",
+      "${path.root}/../../post-install-scripts/stamp.bash",
+      "${path.root}/../../post-install-scripts/minimize.bash",
     ]
   }
 

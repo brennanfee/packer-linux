@@ -7,16 +7,6 @@ packer {
   }
 }
 
-variable "hostname" {
-  type    = string
-  default = "vagrant"
-}
-
-variable "domain" {
-  type    = string
-  default = "fee.house"
-}
-
 variable "username" {
   type    = string
   default = "vagrant"
@@ -28,13 +18,12 @@ variable "password" {
 }
 
 locals {
-  virtualization-type = "vagrantVbox"
   configuration = "barePreseed"
 
   edition = "stable"
-  version = "11.1.0"
+  version = "11.4.0"
 
-  script_branch = "develop"
+  script_branch = "main"
 }
 
 source "virtualbox-iso" "debian-preseed" {
@@ -102,9 +91,8 @@ source "virtualbox-iso" "debian-preseed" {
     "auto=true ",
     "priority=critical ",
     "url=https://raw.githubusercontent.com/brennanfee/linux-bootstraps/${local.script_branch}/preseeds/debian/./debian11.cfg ",
+    "AUTO_DOMAIN=bfee.org ",
     "AUTO_EDITION=${local.edition} ",
-    "AUTO_HOSTNAME=${var.hostname} ",
-    "AUTO_DOMAIN=${var.domain} ",
     "AUTO_USERNAME=${var.username} ",
     "AUTO_PASSWORD=${var.password} ",
     "vga=788 noprompt quiet --<enter>",
@@ -117,7 +105,7 @@ build {
   source "sources.virtualbox-iso.debian-preseed" {
     keep_registered = false
     skip_export     = false
-    vm_name         = "bfee-debian-${local.edition}-${local.virtualization-type}-${local.configuration}"
+    vm_name         = "bfee-vagrantVbox-debian-${local.edition}-${local.configuration}"
     iso_url         = "https://cdimage.debian.org/images/unofficial/non-free/images-including-firmware/${local.version}+nonfree/amd64/iso-cd/firmware-${local.version}-amd64-netinst.iso"
     iso_checksum    = "file:https://cdimage.debian.org/images/unofficial/non-free/images-including-firmware/${local.version}+nonfree/amd64/iso-cd/SHA256SUMS"
   }
@@ -126,10 +114,10 @@ build {
     execute_command = "echo '${var.password}' | {{.Vars}} sudo -S -H -E bash -c '{{.Path}}'"
     expect_disconnect = true
     scripts = [
-      "${path.root}/../post-install-scripts/setupDataDir.bash",
-      "${path.root}/../post-install-scripts/virtualbox.bash",
-      "${path.root}/../post-install-scripts/vagrant.bash",
-      "${path.root}/../post-install-scripts/reboot.sh",
+      "${path.root}/../../post-install-scripts/setupDataDir.bash",
+      "${path.root}/../../post-install-scripts/virtualbox.bash",
+      "${path.root}/../../post-install-scripts/vagrant.bash",
+      "${path.root}/../../post-install-scripts/reboot.sh",
     ]
   }
 
@@ -137,20 +125,20 @@ build {
     execute_command = "echo '${var.password}' | {{.Vars}} sudo -S -H -E bash -c '{{.Path}}'"
     expect_disconnect = true
     scripts = [
-      "${path.root}/../post-install-scripts/stamp.bash",
-      "${path.root}/../post-install-scripts/minimize.bash",
+      "${path.root}/../../post-install-scripts/stamp.bash",
+      "${path.root}/../../post-install-scripts/minimize.bash",
     ]
   }
 
   post-processor "manifest" {}
 
   post-processor "vagrant" {
-    output = "${path.root}/../images/bfee-debian-${local.edition}-${local.virtualization-type}-${local.configuration}.box"
+    output = "${path.root}/../../images/bfee-vagrantVbox-debian-${local.edition}-${local.configuration}.box"
   }
 
   post-processor "shell-local" {
     inline = [
-      "mv -f ${path.root}/packer-manifest.json ${path.root}/../images/bfee-debian-${local.edition}-${local.virtualization-type}-${local.configuration}-manifest.json",
+      "mv -f ${path.root}/packer-manifest.json ${path.root}/../../images/bfee-vagrantVbox-debian-${local.edition}-${local.configuration}-manifest.json",
     ]
   }
 }

@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# This script takes any actions necessary to make a pre-seed installation
+# more closely match my scripted installer.
 
 # Bash strict mode
 ([[ -n ${ZSH_EVAL_CONTEXT:-} && ${ZSH_EVAL_CONTEXT:-} =~ :file$ ]] ||
@@ -51,7 +53,7 @@ main () {
   # Add some users to the group, we can't use $USER here because we are running this script as root
   local current_user
   current_user=$(logname)
-  local usersToAdd=("${current_user}" svcacct ansible vagrant)
+  local usersToAdd=("${current_user}" vagrant vboxsf)
 
   for userToAdd in "${usersToAdd[@]}"
   do

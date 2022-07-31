@@ -114,10 +114,10 @@ build {
     execute_command = "echo '${var.password}' | {{.Vars}} sudo -S -H -E bash -c '{{.Path}}'"
     expect_disconnect = true
     scripts = [
-      "${path.root}/../../post-install-scripts/setupDataDir.bash",
       "${path.root}/../../post-install-scripts/virtualbox.bash",
       "${path.root}/../../post-install-scripts/vagrant.bash",
-      "${path.root}/../../post-install-scripts/reboot.sh",
+      "${path.root}/../../post-install-scripts/alignWithScripted.bash",
+      "${path.root}/../../post-install-scripts/reboot.bash",
     ]
   }
 

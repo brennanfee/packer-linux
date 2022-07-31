@@ -93,11 +93,11 @@ main() {
 
     # Add user to the vboxsf group
     local group_exists
-    group_exists=$(getent group vboxsf-user | wc -l || true)
+    group_exists=$(getent group vboxsf | wc -l || true)
 
     if [[ ${group_exists} == "1" ]]
     then
-      local usersToAdd=("${current_user}" svcacct ansible vagrant)
+      local usersToAdd=("${current_user}" vagrant vboxsf)
 
       for userToAdd in "${usersToAdd[@]}"
       do

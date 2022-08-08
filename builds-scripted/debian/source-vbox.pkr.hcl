@@ -1,39 +1,8 @@
-packer {
-  required_plugins {
-    virtualbox = {
-      version = ">= 0.0.1"
-      source  = "github.com/hashicorp/virtualbox"
-    }
-  }
-}
-
-variable "username" {
-  type    = string
-  default = "debian"
-}
-
-variable "password" {
-  type    = string
-  default = "debian"
-}
-
-locals {
-  configuration = "bare"
-
-  iso_version = "11.4.0"
-
-  script_branch = "main"
-  edition = "testing"
-  config-script = "debian-my-configs/auto-${local.edition}-singleDisk.bash"
-}
-
 source "virtualbox-iso" "debian-scripted" {
   format        = "ova"
   iso_interface = "sata"
 
   headless        = false
-
-  output_directory = "${path.root}/output"
 
   communicator = "ssh"
   ssh_username = "${var.username}"
@@ -65,8 +34,6 @@ source "virtualbox-iso" "debian-scripted" {
   audio_controller         = "hda"
   sound                    = "pulse"
 
-  # disk_additional_size = [102400]
-
   vboxmanage = [
     ["modifyvm", "{{.Name}}", "--paravirtprovider", "default"],
     ["modifyvm", "{{.Name}}", "--pae", "on"],
@@ -94,39 +61,11 @@ source "virtualbox-iso" "debian-scripted" {
     "initrd /live/initrd.img-5.10.0-16-amd64<enter>",
     "boot<enter><wait30>",
     "sudo su <enter>",
-    "/usr/bin/wget -O config.bash https://raw.githubusercontent.com/brennanfee/linux-bootstraps/${local.script_branch}/scripted-installer/debian/${local.config-script} <enter><wait5>",
+    "/usr/bin/wget -O config.bash https://raw.githubusercontent.com/brennanfee/linux-bootstraps/${var.script_branch}/scripted-installer/debian/${local.config_script} <enter><wait5>",
     "export AUTO_REBOOT=1 <enter>",
-    "export AUTO_USERNAME=debian <enter>",
+    "export AUTO_USERNAME=${var.username} <enter>",
+    "export AUTO_USER_PWD=${var.password} <enter>",
     "export AUTO_ENCRYPT_DISKS=0 <enter>",
     "/usr/bin/bash ./config.bash<enter>",
   ]
-}
-
-build {
-  source "sources.virtualbox-iso.debian-scripted" {
-    keep_registered = false
-    skip_export     = false
-    vm_name         = "bfee-vbox-debian-${local.edition}-${local.configuration}"
-    iso_url         = "https://cdimage.debian.org/images/unofficial/non-free/images-including-firmware/${local.iso_version}-live+nonfree/amd64/iso-hybrid/debian-live-${local.iso_version}-amd64-standard+nonfree.iso"
-    iso_checksum    = "file:https://cdimage.debian.org/images/unofficial/non-free/images-including-firmware/${local.iso_version}-live+nonfree/amd64/iso-hybrid/SHA256SUMS"
-  }
-
-  #Should always be the last provisioner
-  provisioner "shell" {
-    execute_command = "echo '${var.password}' | {{.Vars}} sudo -S -H -E bash -c '{{.Path}}'"
-    scripts = [
-      "${path.root}/../../post-install-scripts/stamp.bash",
-      "${path.root}/../../post-install-scripts/minimize.bash",
-    ]
-  }
-
-  # post-processor "manifest" {}
-
-  # #  "rmdir ${path.root}/output-ubuntu/",
-  # post-processor "shell-local" {
-  #   inline = [
-  #     "mv -f ${path.root}/output-ubuntu/*.ova ${path.root}/../images/",
-  #     "mv -f ${path.root}/packer-manifest.json ${path.root}/../images/debian-vbox-manifest.json",
-  #   ]
-  # }
 }

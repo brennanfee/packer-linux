@@ -97,7 +97,7 @@ main() {
 
     if [[ ${group_exists} == "1" ]]
     then
-      local usersToAdd=("${current_user}" vagrant vboxsf)
+      local usersToAdd=("${current_user}" vagrant)
 
       for userToAdd in "${usersToAdd[@]}"
       do

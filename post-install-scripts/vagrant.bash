@@ -31,43 +31,62 @@ main() {
   local user_exists
   user_exists=$(getent passwd vagrant | wc -l || true)
 
-  if [[ ${user_exists} == "1" ]]
+  # Create the user if it doesn't exist
+  if [[ ${user_exists} == "0" ]]
   then
-    echo 'Setting up vagrant user'
+    adduser --quiet --disabled-password --gecos "Vagrant" "vagrant"
+    local passwd
+    passwd=$(echo "vagrant" | openssl passwd -6 -stdin)
+    usermod --password "${passwd}" "vagrant"
 
-    # Install vagrant ssh key
-    if [[ ! -f /home/vagrant/.ssh/authorized_keys ]]
-    then
-      mkdir -p /home/vagrant/.ssh
-      wget -nv --no-check-certificate -O /home/vagrant/.ssh/authorized_keys 'https://raw.githubusercontent.com/hashicorp/vagrant/master/keys/vagrant.pub'
-      chown -R vagrant /home/vagrant/.ssh
-      chmod -R go-rwsx /home/vagrant/.ssh
-    fi
-
-    # Add vagrant user to passwordless sudo
-    if [[ ! -f /etc/sudoers.d/vagrant ]]
-    then
-      cat << EOF > /etc/sudoers.d/vagrant
-Defaults:svcacct !requiretty
-svcacct ALL=(ALL) NOPASSWD: ALL
-EOF
-
-      chmod 440 /etc/sudoers.d/vagrant
-    fi
-
-    # Add the user to some groups
-    local groupsToAdd=(sudo ssh _ssh users data-user vboxsf)
-
+    # NOTE: I added _ssh as a group because it seems that Debian testing is currently not creating the standard ssh group but instead naming it _ssh, need to investigate further.
+    groupsToAdd=(audio video plugdev netdev sudo ssh _ssh users data-user vboxsf)
     for groupToAdd in "${groupsToAdd[@]}"
     do
-      local group_exists
       group_exists=$(getent group "${groupToAdd}" | wc -l || true)
-      if [[ "${group_exists}" -eq 1 ]]
+      if [[ ${group_exists} == "1" ]]
       then
-        usermod -a -G "${groupToAdd}" vagrant
+        usermod -a -G "${groupToAdd}" "vagrant"
       fi
     done
+
+    user_exists="1"
   fi
+
+  echo 'Setting up vagrant user'
+
+  # Install vagrant ssh key
+  if [[ ! -f /home/vagrant/.ssh/authorized_keys ]]
+  then
+    mkdir -p /home/vagrant/.ssh
+    wget -nv --no-check-certificate -O /home/vagrant/.ssh/authorized_keys 'https://raw.githubusercontent.com/hashicorp/vagrant/master/keys/vagrant.pub'
+    chown -R vagrant /home/vagrant/.ssh
+    chmod -R go-rwsx /home/vagrant/.ssh
+  fi
+
+  # Add vagrant user to passwordless sudo
+  if [[ ! -f /etc/sudoers.d/vagrant ]]
+  then
+    cat << EOF > /etc/sudoers.d/vagrant
+Defaults:vagrant !requiretty
+vagrant ALL=(ALL) NOPASSWD: ALL
+EOF
+
+    chmod 440 /etc/sudoers.d/vagrant
+  fi
+
+  # Add the user to some groups
+  local groupsToAdd=(sudo ssh _ssh users data-user vboxsf)
+
+  for groupToAdd in "${groupsToAdd[@]}"
+  do
+    local group_exists
+    group_exists=$(getent group "${groupToAdd}" | wc -l || true)
+    if [[ "${group_exists}" -eq 1 ]]
+    then
+      usermod -a -G "${groupToAdd}" "vagrant"
+    fi
+  done
 }
 
 main

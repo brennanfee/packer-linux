@@ -12,7 +12,7 @@ Vagrant.configure("2") do |config|
   # For a complete reference, please see the online documentation at
   # https://docs.vagrantup.com.
 
-  config.vm.box = "bfee-debian-testing-bare"
+  config.vm.box = "bfee-vagrantVbox-debian-testing-bare"
 
   config.vm.synced_folder ".", "/vagrant"
 
@@ -21,17 +21,17 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provision "ansible", run: "always" do |ansible|
-    ansible.playbook = "../../ping.yml"
+    ansible.playbook = "../../ansible/ping.yml"
     ansible.compatibility_mode = "2.0"
 #    ansible.verbose = "vvvv"
   end
   if ARGV.include? '--provision-with'
     config.vm.provision "ping", type: "ansible", run: "always" do |ansible|
-      ansible.playbook = "../../ping.yml"
+      ansible.playbook = "../../ansible/ping.yml"
       ansible.compatibility_mode = "2.0"
     end
     config.vm.provision "facts", type: "ansible", run: "always" do |ansible|
-      ansible.playbook = "../../facts.yml"
+      ansible.playbook = "../../ansible/facts.yml"
       ansible.compatibility_mode = "2.0"
     end
   end

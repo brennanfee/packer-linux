@@ -116,7 +116,7 @@ build {
     scripts = [
       "${path.root}/../../post-install-scripts/virtualbox.bash",
       "${path.root}/../../post-install-scripts/vagrant.bash",
-      "${path.root}/../../post-install-scripts/alignWithScripted.bash",
+      "${path.root}/../../post-install-scripts/preseedAlignWithScripted.bash",
       "${path.root}/../../post-install-scripts/reboot.bash",
     ]
   }

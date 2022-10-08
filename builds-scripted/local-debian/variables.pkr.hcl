@@ -44,7 +44,7 @@ variable "auto_reboot" {
 }
 
 locals {
-  iso_version = "11.4.0"
+  iso_version = "11.5.0"
 
   config_script = "debian-my-configs/auto-${var.edition}-${var.script_config_type}.bash"
 }

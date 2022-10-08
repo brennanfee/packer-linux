@@ -61,11 +61,12 @@ source "virtualbox-iso" "debian-scripted" {
   boot_wait = "3s"
   boot_command = [
     "c<wait3>",
-    "linux /live/vmlinuz-5.10.0-16-amd64 boot=live noeject noprompt components splash quiet --<enter>",
-    "initrd /live/initrd.img-5.10.0-16-amd64<enter>",
+    "linux /live/vmlinuz-5.10.0-18-amd64 boot=live noeject noprompt components splash quiet --<enter>",
+    "initrd /live/initrd.img-5.10.0-18-amd64<enter>",
     "boot<enter><wait30>",
     "sudo su <enter>",
     "/usr/bin/wget -O config.bash http://{{ .HTTPIP }}:{{ .HTTPPort }}/${local.config_script}<enter><wait5>",
+    "export CONFIG_SCRIPT_SOURCE='http://{{ .HTTPIP }}:{{ .HTTPPort }}/deb-install.bash' <enter>",
     "export AUTO_IS_DEBUG=${var.is_debug} <enter>",
     "export AUTO_REBOOT=${var.auto_reboot} <enter>",
     "export AUTO_USERNAME=${var.username} <enter>",

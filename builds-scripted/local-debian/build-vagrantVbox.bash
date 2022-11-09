@@ -60,7 +60,7 @@ help() {
 
 read_inputs() {
   CONFIG=$(echo "${1:-}" | tr "[:upper:]" "[:lower:]")
-  EDITION=$(echo "${2:-}" | tr "[:upper:]" "[:lower:]")
+  EDITION="${2:-}"
   DISK_CONFIG=$(echo "${3:-}" | tr "[:upper:]" "[:lower:]")
   ENCRYPTED=$(echo "${4:-}" | tr "[:upper:]" "[:lower:]")
 }
@@ -88,13 +88,13 @@ set_defaults() {
 }
 
 verify_inputs() {
-  local supported_editions=( "stable" "testing" )
+  local supported_editions=( "stable" "stableBackports" "testing" )
   local supported_disk_configs=( "single" "multi" )
 
   get_exit_code contains_element "${EDITION}" "${supported_editions[@]}"
   if [[ ! ${EXIT_CODE} == "0" ]]
   then
-    error_msg "Invalid option for edition '${EDITION}', use 'stable' or 'testing'"
+    error_msg "Invalid option for edition '${EDITION}', use 'stable', 'stableBackports', or 'testing'"
   fi
 
   get_exit_code contains_element "${DISK_CONFIG}" "${supported_disk_configs[@]}"

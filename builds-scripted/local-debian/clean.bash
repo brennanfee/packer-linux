@@ -25,30 +25,39 @@ main() {
   local registered_vms
   registered_vms="$(VBoxManage list vms | cut -d" " -f 1)"
 
-  local vms_to_check_for=( "local-vbox-debian-stable-bare" \
-    "local-vbox-debian-testing-bare" "local-vagrantVbox-debian-stable-bare" \
-    "local-vagrantVbox-debian-testing-bare" )
+  local supported_virtPlatforms=( "vbox" "vagrantVbox" )
+  local supported_distros=( "debian" "ubuntu" )
+  local supported_editions=( "stable" "stableBackports" "testing" )
+  local supported_build_configs=( "bare" )
 
-  for vm_to_check_for in "${vms_to_check_for[@]}"
+  for virtPlatform_to_check in "${supported_virtPlatforms[@]}"
   do
-    if [[ "${registered_vms}" == *"${vm_to_check_for}"* ]]
-    then
-      echo "WARNING: Removing the '${vm_to_check_for}' VM"
-      VBoxManage unregistervm "${vm_to_check_for}" --delete
-    fi
-  done
+    for distro_to_check in "${supported_distros[@]}"
+    do
+      for edition_to_check in "${supported_editions[@]}"
+      do
+        for build_to_check in "${supported_build_configs[@]}"
+        do
+          local vm_to_check_for="local-${virtPlatform_to_check}-${distro_to_check}-${edition_to_check}-${build_to_check}"
+          local source_to_check_for="local-${virtPlatform_to_check}-${distro_to_check}-${build_to_check}"
 
-  local sources_to_check_for=( "local-vbox-debian-bare" \
-    "local-vagrantVbox-debian-bare" )
+          # Remove the vm
+          if [[ "${registered_vms}" == *"${vm_to_check_for}"* ]]
+          then
+            echo "WARNING: Removing the '${vm_to_check_for}' VM"
+            VBoxManage unregistervm "${vm_to_check_for}" --delete
+          fi
 
-  for source_name in "${sources_to_check_for[@]}"
-  do
-    local dir_to_check="${SCRIPT_DIR}/output-${source_name}"
-    if [[ -d "${dir_to_check}" ]]
-    then
-      echo "WARNING: Removing the '${dir_to_check}' directory"
-      rm -rf "${dir_to_check}"
-    fi
+          # Now the output folder
+          local dir_to_check="${SCRIPT_DIR}/output-${source_to_check_for}"
+          if [[ -d "${dir_to_check}" ]]
+          then
+            echo "WARNING: Removing the '${dir_to_check}' directory"
+            rm -rf "${dir_to_check}"
+          fi
+        done
+      done
+    done
   done
 
   if [[ -f "${SCRIPT_DIR}/packer-manifest.json" ]]

@@ -36,7 +36,7 @@ main() {
 
   local the_date
   the_date=$(date -Is)
-  echo "Build Time: ${the_date}" | sudo tee "${stamp_path}/image_build_info"
+  echo "Packer Build Time: ${the_date}" | sudo tee "${stamp_path}/image_build_info"
 
   if [[ -n "${PACKER_BUILD_NAME:-}" ]]
   then
@@ -51,7 +51,7 @@ main() {
   # Can't use $USER here because we are running this script as root
   local current_user
   current_user=$(logname)
-  echo "Installed User: ${current_user}" | sudo tee -a "${stamp_path}/image_build_info"
+  echo "Packer Installed User: ${current_user}" | sudo tee -a "${stamp_path}/image_build_info"
 
   if [[ -f "/home/${current_user}/.vbox_version" ]]
   then

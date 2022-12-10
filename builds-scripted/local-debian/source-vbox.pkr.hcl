@@ -66,16 +66,12 @@ source "virtualbox-iso" "debian-scripted" {
     "sudo su <enter>",
     "/usr/bin/wget -O config.bash http://{{ .HTTPIP }}:{{ .HTTPPort }}/${local.config_script}<enter><wait5>",
     "export CONFIG_SCRIPT_SOURCE='http://{{ .HTTPIP }}:{{ .HTTPPort }}/deb-install.bash' <enter>",
-    "export AUTO_IS_DEBUG=${var.is_debug} <enter>",
-    "export AUTO_REBOOT=${var.auto_reboot} <enter>",
     "export AUTO_USERNAME=${var.username} <enter>",
     "export AUTO_USER_PWD=${var.password} <enter>",
     "export AUTO_ENCRYPT_DISKS=${var.auto_encrypt_disk} <enter>",
-    # Test
-    #"export AUTO_INSTALL_OS=ubuntu <enter>",
-    "export AUTO_BEFORE_SCRIPT=http://{{ .HTTPIP }}:{{ .HTTPPort }}/../../../packer-linux/test-scripts/test-before-script.bash <enter>",
-    "export AUTO_AFTER_SCRIPT=http://{{ .HTTPIP }}:{{ .HTTPPort }}/../../../packer-linux/test-scripts/test-after-script.py <enter>",
-    "export AUTO_FIRST_BOOT_SCRIPT=http://{{ .HTTPIP }}:{{ .HTTPPort }}/../../../packer-linux/test-scripts/test-first-boot-script.bash <enter>",
-    "/usr/bin/bash ./config.bash<enter>",
+    # Tests
+    #
+    # Run the installer
+    "/usr/bin/bash ./config.bash -r<enter>",
   ]
 }

@@ -1,4 +1,4 @@
-edition            = "testing"
+edition            = "backports"
 script_config_type = "multiDisk-encrypted"
 auto_encrypt_disk  = 0
 

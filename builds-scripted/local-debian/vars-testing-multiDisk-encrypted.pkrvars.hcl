@@ -1,7 +1,5 @@
 edition            = "testing"
-script_config_type = "multiDisk"
+script_config_type = "multiDisk-encrypted"
+auto_encrypt_disk  = 1
 
-additional_disks = [102400]
-
-is_debug          = 0
-auto_encrypt_disk = 1
+additional_disks   = [102400]

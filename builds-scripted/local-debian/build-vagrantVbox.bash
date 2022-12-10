@@ -47,7 +47,7 @@ help() {
     `" 'desktop' are currently supported, later this will be just a pass-through with"`
     `" no verification to any configuration script I decide to build. The default is"`
     `" 'bare'."
-  print_status "  OS Edition: Can be either 'stable' or 'testing' and refers to the "`
+  print_status "  OS Edition: Can be either 'stable', 'backports', or 'testing' and refers to the "`
     `"branch of Debian.  The default value is 'stable'."
   print_status "  Disk Configuration: Can be either 'single' or 'multi' for a "`
     `"single or multi-disk configuration. The default value is 'single'."
@@ -88,13 +88,13 @@ set_defaults() {
 }
 
 verify_inputs() {
-  local supported_editions=( "stable" "stableBackports" "testing" )
+  local supported_editions=( "stable" "backports" "testing" )
   local supported_disk_configs=( "single" "multi" )
 
   get_exit_code contains_element "${EDITION}" "${supported_editions[@]}"
   if [[ ! ${EXIT_CODE} == "0" ]]
   then
-    error_msg "Invalid option for edition '${EDITION}', use 'stable', 'stableBackports', or 'testing'"
+    error_msg "Invalid option for edition '${EDITION}', use 'stable', 'backports', or 'testing'"
   fi
 
   get_exit_code contains_element "${DISK_CONFIG}" "${supported_disk_configs[@]}"

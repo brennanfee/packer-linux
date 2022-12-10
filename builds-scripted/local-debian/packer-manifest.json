@@ -1,0 +1,22 @@
+{
+  "builds": [
+    {
+      "name": "debian-scripted",
+      "builder_type": "virtualbox-iso",
+      "build_time": 1670658249,
+      "files": [
+        {
+          "name": "/home/brennan/profile/source/packer-linux/builds-scripted/local-debian/output-local-vbox-debian-bare/local-vbox-debian-backports-bare.vdi",
+          "size": 2965372928
+        }
+      ],
+      "artifact_id": "VM",
+      "packer_run_uuid": "d4c62dea-9248-6b1d-bb11-26024514f025",
+      "custom_data": {
+        "build_date": "2022-12-10T07:44:09Z",
+        "image_name": "local-vbox-debian-backports-bare"
+      }
+    }
+  ],
+  "last_run_uuid": "d4c62dea-9248-6b1d-bb11-26024514f025"
+}

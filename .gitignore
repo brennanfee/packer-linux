@@ -197,3 +197,4 @@ $RECYCLE.BIN/
 logs/
 images/
 output/
+packer-manifest.json

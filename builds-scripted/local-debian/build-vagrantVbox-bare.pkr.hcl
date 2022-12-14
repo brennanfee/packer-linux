@@ -9,23 +9,6 @@ build {
     iso_checksum     = "file:https://cdimage.debian.org/images/unofficial/non-free/images-including-firmware/${local.iso_version}-live+nonfree/amd64/iso-hybrid/SHA256SUMS"
   }
 
-  // provisioner "file" {
-  //   source = "${path.root}/../../post-install-scripts/vagrant.bash"
-  //   destination = "/tmp/vagrant.bash"
-  // }
-
-  // provisioner "file" {
-  //   source = "${path.root}/../../post-install-scripts/virtualbox.bash"
-  //   destination = "/tmp/virtualbox.bash"
-  // }
-
-  // provisioner "shell" {
-  //   execute_command = "echo '${var.password}' | {{.Vars}} sudo -S -H -E bash -c '{{.Path}}'"
-  //   inline = [
-  //     "mv /tmp/*.bash /srv/"
-  //   ]
-  // }
-
   provisioner "shell" {
     execute_command   = "echo '${var.password}' | {{.Vars}} sudo -S -H -E bash -c '{{.Path}}'"
     expect_disconnect = true

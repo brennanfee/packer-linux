@@ -39,20 +39,12 @@ help() {
   blank_line
   print_status "Basic usage:"
   blank_line
-  print_status "Values can be omitted from the right toward the left of the options."`
-    `" An omitted option accepts the default for that option.  The optins are ordered"`
-    `" in order of importance and most common usage."
+  print_status "Values can be omitted from the right toward the left of the options. An omitted option accepts the default for that option.  The optins are ordered in order of importance and most common usage."
   blank_line
-  print_status "  Configuration: This is the machine configuration.  'bare', 'server',"`
-    `" 'desktop' are currently supported, later this will be just a pass-through with"`
-    `" no verification to any configuration script I decide to build. The default is"`
-    `" 'bare'."
-  print_status "  OS Edition: Can be either 'stable', 'backports', or 'testing' and refers to the "`
-    `"branch of Debian.  The default value is 'stable'."
-  print_status "  Disk Configuration: Can be either 'single' or 'multi' for a "`
-    `"single or multi-disk configuration. The default value is 'single'."
-  print_status "  Encrypted: Can only be the word 'encrypted' and when present "`
-    `"will produce disks that are encrypted.  The default value is not to encrypt."
+  print_status "  Configuration: This is the machine configuration.  'bare', 'server', 'desktop' are currently supported, later this will be just a pass-through with no verification to any configuration script I decide to build. The default is 'bare'."
+  print_status "  OS Edition: Can be 'stable', 'backports', or 'testing' for Debian or 'ubuntu-lts' and 'ubuntu-rolling' for Ubuntu.  Each refers to the branch of OS you want to install.  The default value is 'stable'."
+  print_status "  Disk Configuration: Can be either 'single' or 'multi' for a single or multi-disk configuration. The default value is 'single'."
+  print_status "  Encrypted: Can only be the word 'encrypted' and when present will produce disks that are encrypted.  The default value is not to encrypt."
   blank_line
 
   exit 0
@@ -88,7 +80,7 @@ set_defaults() {
 }
 
 verify_inputs() {
-  local supported_editions=( "stable" "backports" "testing" )
+  local supported_editions=( "stable" "backports" "testing" "ubuntu-lts" "ubuntu-rolling" )
   local supported_disk_configs=( "single" "multi" )
 
   get_exit_code contains_element "${EDITION}" "${supported_editions[@]}"

@@ -45,6 +45,21 @@ main() {
     flatpak upgrade -y --noninteractive --system
     flatpak upgrade -y --noninteractive --user
   fi
+
+  if command -v snap &> /dev/null
+  then
+    snap refresh
+  fi
+
+  if command -v pipx &> /dev/null
+  then
+    pipx upgrade-all
+  fi
+
+  if command -v asdf &> /dev/null
+  then
+    asdf plugin update --all
+  fi
 }
 
 main

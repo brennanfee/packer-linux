@@ -31,9 +31,9 @@ main() {
   if command -v apt-get &> /dev/null
   then
     echo "Clean up Apt"
-    apt-get -y -q autoremove
-    apt-get -y -q clean
-    apt-get -y -q autoclean
+    DEBIAN_FRONTEND=noninteractive apt-get -y -q autoremove
+    DEBIAN_FRONTEND=noninteractive apt-get -y -q clean
+    DEBIAN_FRONTEND=noninteractive apt-get -y -q autoclean
   fi
 
   if command -v pacman &> /dev/null

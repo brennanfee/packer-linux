@@ -1,0 +1,327 @@
+Start log: 2023-03-04T12:47:48-06:00
+------------
+INFO: Checking root permissions...
+INFO: Checking network connectivity...
+INFO: Connection found.
+INFO: Checking prerequisites
+LOG: In welcome screen.
+LOG: ------
+LOG: TITLE: Deb-Install Automated Bootstrapper - Author: Brennan Fee - License: MIT License
+LOG: ------
+
+STATUS: Interactive script to install Debian and Ubuntu systems the 'Arch Way' (aka deboostrap).
+
+STATUS: Script version: 0.5 - Script date: 2022-11-15
+
+STATUS: For more information, documentation, or help:  https://github.com/brennanfee/linux-bootstraps
+
+LOG: ------
+
+STATUS: Script can be cancelled at any time with CTRL+C
+
+LOG: ------
+LOG: In ask for keymap.
+LOG: ------
+SECTION: Keymap
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: Pick a keymap for the machine.  Press enter to accept the default.
+LOG: Kemap to use: us
+LOG: In ask for locale.
+LOG: ------
+SECTION: Locale
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: Pick the locale to use for the machine.  Press enter to accept the default.
+LOG: Locale to use: en_US.UTF-8
+LOG: In ask for timezone.
+LOG: ------
+SECTION: Timezone
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: Enter a timezone for the machine.  Press enter to accept the default.
+LOG: Timezone to use: America/Chicago
+LOG: In ask for os to install.
+LOG: ------
+SECTION: OS To Install
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: Pick an OS to install.
+LOG: Selected OS before validation: ubuntu
+STATUS: exit code: 0
+LOG: OS to install: ubuntu
+LOG: In ask for os edition to install.
+LOG: ------
+SECTION: OS Edition To Install
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: Enter an edition to install.  You can enter an edition like 'stable' or 'testing' for Debian, or 'lts' or 'rolling' for Ubuntu.  You can also enter a specific codename for the given distribution, such as 'bullseye' or 'jammy'.  Entering 'default' will auto-select the latest stable release available (the same as 'stable' for Debian or 'lts' for Ubuntu).  Press enter to accept the default.
+LOG: OS edition to install: default
+LOG: In ask for kernel version.
+LOG: In ask for UBUNTU kernel version.
+LOG: ------
+SECTION: Kernel Version To Install
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: Pick a Kernel Version to install.  Note that the installer will regressively fall back if the requested kernel edition is not available.  If hwe-edge is requested but only hwe is avialable, you will get hwe.  If neither are aviable, the default kernel will be installed.
+LOG: Kernel edition to install: default
+LOG: In ask for repo override url.
+LOG: ------
+SECTION: Override Repo URL
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: If desired, input an override for the APT repository to use for installation, leave blank for no override.  Press enter to accept the default (no override).
+LOG: APT Repo Override URL: 
+LOG: In ask for hostname.
+LOG: ------
+SECTION: Hostname
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: Enter a hostname for this machine.  If left blank, a random hostname will be generated at installation time.  Press enter to accept the default.
+LOG: Hostname to use: 
+LOG: In ask for domain.
+LOG: ------
+SECTION: Domain
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: Enter a domain for this machine.  If left blank, no domain will be configured on the machine.  Press enter to accept the default.
+LOG: Domain to use: bfee.org
+LOG: In ask should skip partitioning.
+LOG: ------
+SECTION: Disk Partitioning
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: Should the script skip automatic partitioning or not?  If you skip automatic partitioning it is expected that before deb-install runs, that all partitions are formatted and mounted at or under /mnt and are ready for installation.  This can be done manually before you execute the deb-install script or using a 'before script'.
+
+Should the automatic partitioning be skipped?
+LOG: Should skip disk partitioning: 0
+LOG: In ask for main disk.
+LOG: ------
+SECTION: Main Disk Selection
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: How do you want to determine the mainoot disk to install? Select 'Smallest' (the default) to auto-select the smallest disk, 'Largest' to auto-select the largest disk, or 'Direct' to enter a device path manually (such as /dev/sda).
+LOG: Main disk selected: smallest
+LOG: In ask for second disk.
+LOG: ------
+SECTION: Second Disk Selection
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: What to do if the system has a second (or more) disks.  Select 'Ignore' (the default) to ignore the other disks and only use the main disk, 'Smallest' to auto-select the smallest disk (or next smallest, after the main disk), 'Largest' to auto-select the largest disk (or next largest, after the main disk), or 'Direct' to type in a device to use manually.
+LOG: Second disk selected: smallest
+LOG: In ask should encrypt disks.
+LOG: ------
+SECTION: Disk Encryption
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: Should the disks be encrypted?
+LOG: Should disks be encrypted: 1
+LOG: In ask for disk password.
+LOG: ------
+SECTION: Disk Passphrase
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: How do you want the disk passphrase to be selected.  You can select 'File' (the default) and an randomly generated encryption file will be used, 'Path' and you can provide a path to a file to use, or 'URL' for a downloadable file to use.  These three options are best used for automated environments where a password entry for boot would be inconvenient yet encrypting the disks is still desired.  It also allows changing the encryption key setup later on after the machine is bootstrapped, which is highly secure given the default setup does not secure the key files.  Lastly, you can select 'Passphrase' to enter a passhprase to use.  Please note that using 'Passphrase' may break any automations in the system configuration as entering the password manually will be required at boot.
+LOG: Disk password option: ******
+LOG: In ask should enable root.
+LOG: ------
+SECTION: Disable Root Account
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: Should the root account be disabled?
+LOG: Should root be disabled: 0
+LOG: In ask for root password.
+LOG: ------
+SECTION: Root Password
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: Enter a password for root.  You can enter nothing to accept the default 'ubuntu'.
+
+LOG: Root password: ******
+LOG: In ask should create user.
+LOG: ------
+SECTION: Create User Account
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: Should a user account be created?
+LOG: Should a user be created: 0
+LOG: In ask for username.
+INFO: Skipping username prompt as user creation was disabled.
+LOG: In ask for user password.
+INFO: Skipping user password prompt as user creation was disabled.
+LOG: In ask should use data folder.
+LOG: ------
+SECTION: Use Data Folder
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: The script provides an option to use a 'data' folder.  This selection may influence the partition scheme, mostly with multi-disk scenarios.  The script will create a group with permissions to the 'data' folder and grant the installed user (if any) permissions through that group.
+LOG: Use data folder: 1
+LOG: In ask override stamp location.
+LOG: ------
+SECTION: Stamp Location
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: The script automatically 'stamps' some files into an auto-selected folder on the machine.  The file contains the date and time of the installation, the log files for the installation, and some other miscellaneous bits.  By default the /srv folder (or /data folder, if that option was selected) will be used.  You can enter a different location here.  If left blank, the default will be used.
+LOG: Stamp location override: 
+LOG: In ask to install change management.
+LOG: ------
+SECTION: Change Management
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: The script supports installing some configuration management software.  This can be useful for situations where an agent needs to be installed after first boot in order for the machine to be configured automatically.  Some of the options are from the standard Apt repository, while others are alternative installation mechanisms which may be necessary to obtain the newest versions of the configuration management software.  Selecting 'none', the default, means no configuration management software will be installed.
+LOG: Configuration Management To Install: none
+LOG: In ask to install extra packages.
+LOG: ------
+SECTION: Install Extra Packages
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: You can, optionally, provide a space separated list of Apt packages to be pre-installed.
+LOG: Extra packages to install: ''
+LOG: In ask for before script.
+LOG: ------
+SECTION: Execute A 'Before' Script
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: You can, optionally, provide a script that will run before the installation script runs.  This 'before' script can perform advanced actions such as disk partitioning.  Note that the target environment is not yet mounted at /mnt and therefore you cannot perform any chroot functionality.  The script can also export script options (export AUTO_TIMEZONE='value') which will be respected by the main script.  So, if you want settings to be based on some kind of logic or based on machine inspection, you may use the 'before' script to perform that logic.  The script does not have to be a bash script, but MUST have a shebang that properly indicates how the script should be run.  Please note that you will need to investigate that your prefered script language is supported in the pre-installation envrionment.  The value provided should be a URL that will be accessible by the installation machine.  The script will be downloaded from that location using wget, so any URL supported by wget will work.  Leaving this blank will skip execution of any 'before' script.
+LOG: 'Before' script to execute: ''
+LOG: In ask for after script.
+LOG: ------
+SECTION: Execute A 'After' Script
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: You can, optionally, provide a script that will run after the main installation but before the machine is rebooted (if reboot was requested).  This script can preform any extra configurations for the target installation.  The /mnt folder will still be available and chroot into that location is supported (you can even use the provided arch-chroot command to make tasks simpler).  The 'after' script SHOULD NOT unmount the /mnt folder.    The script does not have to be a bash script, but MUST have a shebang that properly indicates how the script should be run.  Please note that you will need to investigate that your prefered script language is supported in the pre-installation envrionment.  The value provided should be a URL that will be accessible by the installation machine.  The script will be downloaded from that location using wget, so any URL supported by wget will work.  Leaving this blank will skip execution of any 'after' script.
+LOG: 'After' script to execute: ''
+LOG: In ask for after first boot script.
+LOG: ------
+SECTION: Execute A 'First Boot' Script
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: You can, optionally, provide a script that will run on the first boot of the machine.  This script will run only once.  It can be used to perform after installation steps or kick off some external configuraiton process or basically do any kind of post-installation steps you might want.  The script will be named '/usr/local/sbin/first-boot.script' and it will not be removed after execution.  The script does not have to be a bash script, but MUST have a shebang that properly indicates how the script should be run.  Please note that you will need to ensure that the script language used is installed and supported in your taget envrionment (for instance by using AUTO_EXTRA_PACKAGES).  The value provided should be a URL that will be accessible by the installation machine.  The script will be downloaded from that location using wget, so any URL supported by wget will work.  Leaving this blank will skip execution of any 'first boot' script.
+LOG: 'First Boot' script to execute: ''
+LOG: In ask about settings confirmation.
+LOG: ------
+SECTION: Pause Script And Confirm Settings With User
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: Should the script pause and confirm the settings with the user before proceeding with installation?  Note that if you are trying to create a fully unattended and automatic installation this should be left off.  The default is to NOT confirm settings and proceed directly to installation.
+LOG: Pause for settings confirmation: 0
+LOG: In ask about auto reboot.
+LOG: ------
+SECTION: Auto Reboot After Installation
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: Should the script automatically reboot the machine after installation? Note that if you are trying to create a fully unattended and automatic installation this should be turned on.  The default is to NOT automatically reboot.  This gives the user the ability to run any manual steps and then reboot when they are ready.
+LOG: Should auto reboot: 1
+LOG: ------
+LOG: TITLE: Deb-Install Automated Bootstrapper - Author: Brennan Fee - License: MIT License
+LOG: ------
+
+LOG: SUMMARY HEADER : Install Summary (Part 1)
+LOG: SUMMARY INFO : Below is a summary of your selections.  Review them carefully.
+LOG: ------
+STATUS: The selected keymap is 'us', locale is 'en_US.UTF-8', and the selected timezone is 'America/Chicago'.
+STATUS: The distribution to install is 'ubuntu', 'default' edition.
+STATUS: The kernel version to install, if available, is 'default'.
+STATUS: The installation repository URL will not be overriden.
+
+STATUS: The hostname will be auto-generated. The domain selected is 'bfee.org'.
+
+STATUS: The main disk selection option was 'smallest'.
+STATUS: The secondary disk selection option was 'smallest'.
+STATUS: The disks will be encrypted.  Encryption method is: 'generated file'.
+
+STATUS: The root account will be activated.
+STATUS: User creation was disabled.
+
+LOG: ------
+LOG: ------
+LOG: TITLE: Deb-Install Automated Bootstrapper - Author: Brennan Fee - License: MIT License
+LOG: ------
+
+LOG: SUMMARY HEADER : Install Summary (Part 2)
+LOG: SUMMARY INFO : Below are more of your selections.  Review them carefully.  If anything is wrong cancel out now with Ctrl-C.  Otherwise press any key to continue.
+LOG: ------
+STATUS: The data folder and related configurations will be deployed.
+STATUS: The default stamp location will be used.
+
+STATUS: No configuration management software will be pre-installed.
+STATUS: No extra packages have been requested to be pre-installed.
+
+STATUS: No 'before' script has been provided.
+STATUS: No 'after' script has been provided.
+STATUS: No 'first boot' script has been provided.
+
+STATUS: The system will NOT confirm settings with the user and will automatically proceed to installation.
+STATUS: The system will automatically reboot after installation.
+
+LOG: ------
+LOG: In ask export or execute.
+LOG: ------
+SECTION: Export Config File Or Execute Now
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: This interactive script can either export a script file that can be used to run the installation with the options selected.  The script created is useful for repeated installations with a similar configuration.  Alternatively, you can execute the installation now with the options selected.  Lastly, you can simply exit the script, losing all selected values.
+LOG: Selected script action: export
+LOG: In ask for export file.
+LOG: ------
+SECTION: Export A Configuration Script
+LOG: ------
+
+LOG: ------
+
+SECTION-INFO: Enter a file name to export the configuration script?  Press enter to accept the default of 'my-config.bash'.
+LOG: Export file selected: 'my-config.bash'

@@ -4,7 +4,7 @@ source "virtualbox-iso" "scripted" {
 
   headless = false
 
-  http_directory = "${path.root}/../../../linux-bootstraps/scripted-installer/debian/"
+  http_directory = "${path.root}/../../../linux-bootstraps/scripted-installer/${var.os}/"
 
   communicator           = "ssh"
   ssh_username           = "${var.username}"
@@ -23,6 +23,7 @@ source "virtualbox-iso" "scripted" {
   hard_drive_discard       = true
   hard_drive_nonrotational = true
   disk_size                = 81920
+  firmware                 = "efi"
   memory                   = 4096
   cpus                     = 2
   usb                      = true
@@ -56,5 +57,15 @@ source "virtualbox-iso" "scripted" {
     ["modifyvm", "{{.Name}}", "--vrde", "off"],
     ["setextradata", "{{.Name}}", "GUI/SuppressMessages", "all"],
     ["setextradata", "{{.Name}}", "VBoxInternal2/EfiGraphicsResolution", "1280x720"],
+  ]
+
+  boot_wait = "3s"
+  boot_command = [
+    "e<wait2>",
+    "<down><down><end> noeject noprompt<f10><wait20>",
+    "sudo su <enter>",
+    "/usr/bin/wget -O config.bash http://{{ .HTTPIP }}:{{ .HTTPPort }}/deb-install-interactive.bash<enter><wait5>",
+    # Run the installer
+    "/usr/bin/bash ./config.bash<enter>",
   ]
 }

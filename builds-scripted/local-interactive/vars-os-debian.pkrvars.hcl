@@ -1,0 +1,2 @@
+os     = "debian"
+prefix = "deb"

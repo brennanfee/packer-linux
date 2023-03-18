@@ -67,13 +67,17 @@ print_success() {
   echo -e "${GREEN}$1${RESET}" | fold -sw "${T_COLS}"
 }
 
-error_msg() {
+print_error() {
   local RED
   RED="$(tput setaf 1)"
   local T_COLS
   T_COLS=$(tput cols)
   T_COLS=$((T_COLS - 1))
   echo -e "${RED}$1${RESET}\n" | fold -sw "${T_COLS}"
+}
+
+error_msg() {
+  print_error "$1"
   exit 1
 }
 

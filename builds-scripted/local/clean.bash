@@ -27,8 +27,8 @@ main() {
 
   local supported_virtPlatforms=( "vbox" "vagrantVbox" )
   local supported_distros=( "debian" "ubuntu" )
-  local supported_editions=( "stable" "backports" "testing" )
-  local supported_build_configs=( "bare" )
+  local supported_editions=( "stable" "backports" "testing" "lts" "ltsedge" "rolling" )
+  local supported_build_configs=( "bare" "bios" )
 
   for virtPlatform_to_check in "${supported_virtPlatforms[@]}"
   do
@@ -39,7 +39,7 @@ main() {
         for build_to_check in "${supported_build_configs[@]}"
         do
           local vm_to_check_for="local-${virtPlatform_to_check}-${distro_to_check}-${edition_to_check}-${build_to_check}"
-          local source_to_check_for="local-${virtPlatform_to_check}-${distro_to_check}-${build_to_check}"
+          local source_to_check_for="local-${virtPlatform_to_check}-${build_to_check}"
 
           # Remove the vm
           if [[ "${registered_vms}" == *"${vm_to_check_for}"* ]]
@@ -63,7 +63,7 @@ main() {
   if [[ -f "${SCRIPT_DIR}/packer-manifest.json" ]]
   then
     echo "WARNING: Removing the packer manifest"
-    rm "${SCRIPT_DIR}/packer-manifest.json"
+    rm -f "${SCRIPT_DIR}/packer-manifest.json"
   fi
 
   # Delete any vagrant boxes

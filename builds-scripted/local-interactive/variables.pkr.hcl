@@ -3,24 +3,14 @@ variable "os" {
   default = "debian"
 }
 
-variable "edition" {
+variable "prefix" {
   type    = string
-  default = "stable"
-}
-
-variable "script_config_type" {
-  type    = string
-  default = "vm"
+  default = "deb"
 }
 
 variable "additional_disks" {
   type    = list(number)
   default = []
-}
-
-variable "auto_encrypt_disk" {
-  type    = number
-  default = 0
 }
 
 variable "username" {
@@ -35,6 +25,4 @@ variable "password" {
 
 locals {
   iso_version = "11.6.0"
-
-  config_script = "${var.os}-my-configs/${var.edition}-${var.script_config_type}.bash"
 }

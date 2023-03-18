@@ -54,7 +54,7 @@ main() {
         then
           efi_disk=$(lsblk -np -o PKNAME,MOUNTPOINT | grep -i "/boot/efi" | cut -d' ' -f 1)
           efi_device=$(lsblk -np -o PATH,MOUNTPOINT | grep -i "/boot/efi" | cut -d' ' -f 1)
-          efi_part="$(udevadm info --query=property --name="${efi_device}" | grep -i ID_PART_ENTRY_NUM |cut -d= -f 2)"
+          efi_part="$(udevadm info --query=property --name="${efi_device}" | grep -i ID_PART_ENTRY_NUM | cut -d= -f 2)"
 
           efibootmgr -c -d "${efi_disk}" -p "${efi_part}" -l '\EFI\debian\grubx64.efi' -L 'debian'
         fi

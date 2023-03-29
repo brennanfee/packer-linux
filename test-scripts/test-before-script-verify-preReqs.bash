@@ -29,11 +29,9 @@ if [[ $(dpkg-query -W -f='${Status}' "ripgrep" 2>/dev/null | grep -c "ok install
 then
   result="FAIL"
 fi
-echo "${result}: Puppet Installed For Configuration Management" >> "${LOG}"
+echo "${result}: Ripgrep installed into pre-installation environment" >> "${LOG}"
 
 if [[ "${result}" == "FAIL" ]]
 then
   exit 10
 fi
-
-exit 11

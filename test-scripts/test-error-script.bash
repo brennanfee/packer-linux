@@ -18,6 +18,9 @@ then
 fi
 # END Bash scrict mode
 
-LOG="/srv/boot-test.log"
+WORKING_DIR=$(pwd)
+LOG="${WORKING_DIR}/install.log"
 
-echo "FIRST BOOT SCRIPT: Hello from first boot script" >> "${LOG}"
+echo "ERROR TEST SCRIPT: This script just runs and returns a non-zero exit code." >> "${LOG}"
+
+exit 10

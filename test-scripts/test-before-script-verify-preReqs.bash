@@ -35,3 +35,5 @@ if [[ "${result}" == "FAIL" ]]
 then
   exit 10
 fi
+
+exit 11

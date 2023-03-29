@@ -35,3 +35,5 @@ if [[ "${result}" == "FAIL" ]]
 then
   exit 10
 fi
+
+echo "BEFORE SCRIPT: Hello from below script" >> "/mnt/srv/before-script.log"

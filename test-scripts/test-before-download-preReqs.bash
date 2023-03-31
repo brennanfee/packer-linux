@@ -21,8 +21,10 @@ fi
 WORKING_DIR=$(pwd)
 LOG="${WORKING_DIR}/install.log"
 
-echo "BEFORE TEST SCRIPT: This script downloads some files to be used in other params.  It creates a local encryption key and a local 'after' script file." >> "${LOG}"
+echo "BEFORE TEST SCRIPT: This script downloads some files to be used in other params.  It creates a local encryption key and a local 'after' script file for later use by the installer." >> "${LOG}"
 
 wget -O "/home/user/test-after-script.py" "https://raw.githubusercontent.com/brennanfee/packer-linux/main/test-scripts/test-after-script.py"
 
 wget -O "/home/user/test-encryption.key" "https://raw.githubusercontent.com/brennanfee/packer-linux/main/test-scripts/test-encryption.key"
+
+echo "BEFORE SCRIPT: Hello from before (downloader) script" >> "/mnt/srv/before-script.log"

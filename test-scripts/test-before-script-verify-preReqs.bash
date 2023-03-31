@@ -21,7 +21,7 @@ fi
 WORKING_DIR=$(pwd)
 LOG="${WORKING_DIR}/install.log"
 
-echo "BEFORE SCRIPT: Hello from below script" >> "${LOG}"
+echo "BEFORE SCRIPT: Hello from before (pre-req verify) script" >> "${LOG}"
 
 # Verify that ripgrep was installed into the pre-installation environment
 result="PASS"
@@ -36,4 +36,4 @@ then
   exit 10
 fi
 
-echo "BEFORE SCRIPT: Hello from below script" >> "/mnt/srv/before-script.log"
+echo "BEFORE SCRIPT: Hello from before (pre-req verify) script" >> "/mnt/srv/before-script.log"

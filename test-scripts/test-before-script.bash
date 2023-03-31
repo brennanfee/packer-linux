@@ -21,6 +21,6 @@ fi
 WORKING_DIR=$(pwd)
 LOG="${WORKING_DIR}/install.log"
 
-echo "BEFORE SCRIPT: Hello from below script" >> "${LOG}"
+echo "BEFORE SCRIPT: Hello from before script" >> "${LOG}"
 
-echo "BEFORE SCRIPT: Hello from below script" >> "/mnt/srv/before-script.log"
+echo "BEFORE SCRIPT: Hello from before script" >> "/mnt/srv/before-script.log"

@@ -26,5 +26,3 @@ echo "BEFORE TEST SCRIPT: This script downloads some files to be used in other p
 wget -O "/home/user/test-after-script.py" "https://raw.githubusercontent.com/brennanfee/packer-linux/main/test-scripts/test-after-script.py"
 
 wget -O "/home/user/test-encryption.key" "https://raw.githubusercontent.com/brennanfee/packer-linux/main/test-scripts/test-encryption.key"
-
-echo "BEFORE SCRIPT: Hello from before (downloader) script" >> "/mnt/srv/before-script.log"

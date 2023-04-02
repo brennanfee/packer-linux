@@ -25,9 +25,7 @@ main() {
   local registered_vms
   registered_vms="$(VBoxManage list vms | cut -d" " -f 1)"
 
-  local vms_to_check_for=( "local-vbox-debian-stable-bare" \
-    "local-vbox-debian-testing-bare" "local-vagrantVbox-debian-stable-bare" \
-    "local-vagrantVbox-debian-testing-bare" )
+  local vms_to_check_for=( "test-vbox-debian-bare" "test-vbox-ubuntu-bare" "test-vbox-bios-bare" "test-vbox-manual-bare" )
 
   for vm_to_check_for in "${vms_to_check_for[@]}"
   do
@@ -38,8 +36,7 @@ main() {
     fi
   done
 
-  local sources_to_check_for=( "local-vbox-debian-bare" \
-    "local-vagrantVbox-debian-bare" )
+  local sources_to_check_for=( "test-vbox-debian-bare" "test-vbox-ubuntu-bare" "test-vbox-bios-bare" "test-vbox-manual-bare" )
 
   for source_name in "${sources_to_check_for[@]}"
   do
@@ -51,14 +48,17 @@ main() {
     fi
   done
 
+  if [[ -f "${SCRIPT_DIR}/test-results.txt" ]]
+  then
+    echo "WARNING: Removing the previous test-results"
+    rm -f "${SCRIPT_DIR}/test-results.txt"
+  fi
+
   if [[ -f "${SCRIPT_DIR}/packer-manifest.json" ]]
   then
     echo "WARNING: Removing the packer manifest"
-    rm "${SCRIPT_DIR}/packer-manifest.json"
+    rm -f "${SCRIPT_DIR}/packer-manifest.json"
   fi
-
-  # Delete any vagrant boxes
-  find "${SCRIPT_DIR}" -iname "*.box" -delete
 }
 
 main

@@ -73,12 +73,17 @@ print_error() {
   local T_COLS
   T_COLS=$(tput cols)
   T_COLS=$((T_COLS - 1))
-  echo -e "${RED}$1${RESET}\n" | fold -sw "${T_COLS}"
+  echo -e "${RED}$1${RESET}" | fold -sw "${T_COLS}"
 }
 
 error_msg() {
   print_error "$1"
-  exit 1
+  if [[ ${2:-} != "" ]]
+  then
+    exit "$2"
+  else
+    exit 1
+  fi
 }
 
 ### END: Print Functions

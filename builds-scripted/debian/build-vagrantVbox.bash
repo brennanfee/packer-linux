@@ -28,11 +28,11 @@ EDITION=""
 source "${SCRIPT_DIR}/../script_tools.bash"
 
 help() {
-  print_status "build-vbox Help"
+  print_status "build-vagrantVbox Help"
   blank_line
   print_status "There are three parameters available: "
   blank_line
-  print_status "  build-vbox <configuration> <os edition>"
+  print_status "  build-vagrantVbox <os edition> <configuration>"
   blank_line
   print_status "Basic usage:"
   blank_line
@@ -52,8 +52,8 @@ help() {
 }
 
 read_inputs() {
-  CONFIG=$(echo "${1:-}" | tr "[:upper:]" "[:lower:]")
-  EDITION=$(echo "${2:-}" | tr "[:upper:]" "[:lower:]")
+  EDITION=$(echo "${1:-}" | tr "[:upper:]" "[:lower:]")
+  CONFIG=$(echo "${2:-}" | tr "[:upper:]" "[:lower:]")
 }
 
 set_defaults() {
@@ -69,19 +69,27 @@ set_defaults() {
 }
 
 verify_inputs() {
-  local supported_editions=( "stable" "testing" )
+  local supported_editions=( "stable" "testing" "backports" )
 
   get_exit_code contains_element "${EDITION}" "${supported_editions[@]}"
   if [[ ! ${EXIT_CODE} == "0" ]]
   then
     error_msg "Invalid option for edition '${EDITION}', use 'stable' or 'testing'"
   fi
+
+  local supported_configs=( "bare" )
+
+  get_exit_code contains_element "${CONFIG}" "${supported_configs[@]}"
+  if [[ ! ${EXIT_CODE} == "0" ]]
+  then
+    error_msg "Invalid option for edition '${CONFIG}', at present only 'bare' is supported."
+  fi
 }
 
 print_config() {
   print_info "Virtualization Type: Vagrant (VirtualBox)"
-  print_info "Configuration: ${CONFIG}"
   print_info "Edition: ${EDITION}"
+  print_info "Configuration: ${CONFIG}"
 }
 
 main() {

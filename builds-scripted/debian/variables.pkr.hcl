@@ -18,13 +18,13 @@ variable "script_branch" {
   default = "main"
 }
 
-variable "script_config_type" {
+variable "is_debug" {
   type = string
-  default = "singleDisk"
+  default = "0"
 }
 
 locals {
-  iso_version = "11.4.0"
+  iso_version = "11.7.0"
 
-  config_script = "debian-my-configs/auto-${var.edition}-${var.script_config_type}.bash"
+  config_script = "debian-my-configs/${var.edition}-vm.bash"
 }

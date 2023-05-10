@@ -42,8 +42,8 @@ build {
 
   post-processor "shell-local" {
     inline = [
-      "rm ${path.root}/output-${source.name}/*.ova",
       "mv -f ${path.root}/packer-manifest.json ${path.root}/../../images/${build.ID}-manifest.json",
+      "rm ${path.root}/output-${source.name}/*.ova",
       "rmdir ${path.root}/output-${source.name}",
     ]
   }

@@ -1,1 +1,2 @@
+os      = "debian"
 edition = "stable"

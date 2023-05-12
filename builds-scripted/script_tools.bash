@@ -2,11 +2,10 @@
 
 # Bash strict mode
 ([[ -n ${ZSH_EVAL_CONTEXT:-} && ${ZSH_EVAL_CONTEXT:-} =~ :file$ ]] ||
- [[ -n ${BASH_VERSION:-} ]] && (return 0 2>/dev/null)) && SOURCED=true || SOURCED=false
-if ! ${SOURCED}
-then
-  set -o errexit # same as set -e
-  set -o nounset # same as set -u
+  [[ -n ${BASH_VERSION:-} ]] && (return 0 2>/dev/null)) && SOURCED=true || SOURCED=false
+if ! ${SOURCED}; then
+  set -o errexit  # same as set -e
+  set -o nounset  # same as set -u
   set -o errtrace # same as set -E
   set -o pipefail
   set -o posix
@@ -16,7 +15,7 @@ then
   shopt -s extdebug
   IFS=$(printf '\n\t')
 fi
-# END Bash scrict mode
+# END Bash strict mode
 
 ### START: Print Functions
 
@@ -78,8 +77,7 @@ print_error() {
 
 error_msg() {
   print_error "$1"
-  if [[ ${2:-} != "" ]]
-  then
+  if [[ ${2:-} != "" ]]; then
     exit "$2"
   else
     exit 1
@@ -96,7 +94,7 @@ get_exit_code() {
   set +e
   (
     # Then we set it again inside a subshell
-    set -e;
+    set -e
     # ...and run the function
     "$@"
   )
@@ -108,8 +106,7 @@ get_exit_code() {
 
 contains_element() {
   #check if an element exist in a string
-  for e in "${@:2}"
-  do
+  for e in "${@:2}"; do
     [[ ${e} == "$1" ]] && break
   done
 }

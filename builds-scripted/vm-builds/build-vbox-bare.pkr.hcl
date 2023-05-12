@@ -1,10 +1,10 @@
 build {
-  source "sources.virtualbox-iso.debian-scripted" {
-    name             = "vbox-debian-bare"
+  source "sources.virtualbox-iso.scripted" {
+    name             = "scripted-vbox-bare"
     output_directory = "${path.root}/output-${source.name}"
-    keep_registered = false
+    keep_registered = "${var.preserve_image}"
     skip_export     = false
-    vm_name         = "bfee-vbox-debian-${var.edition}-bare"
+    vm_name         = "bfee-vbox-${var.os}-${var.edition}-bare"
     iso_url         = "https://cdimage.debian.org/images/unofficial/non-free/images-including-firmware/${local.iso_version}-live+nonfree/amd64/iso-hybrid/debian-live-${local.iso_version}-amd64-standard+nonfree.iso"
     iso_checksum    = "file:https://cdimage.debian.org/images/unofficial/non-free/images-including-firmware/${local.iso_version}-live+nonfree/amd64/iso-hybrid/SHA256SUMS"
   }
@@ -37,8 +37,8 @@ build {
 
   post-processor "shell-local" {
     inline = [
-      "mv -f ${path.root}/output-${source.name}/*.ova ${path.root}/../../images/",
       "mv -f ${path.root}/packer-manifest.json ${path.root}/../../images/${build.ID}-manifest.json",
+      "mv -f ${path.root}/output-${source.name}/*.ova ${path.root}/../../images/",
       "rmdir ${path.root}/output-${source.name}",
     ]
   }

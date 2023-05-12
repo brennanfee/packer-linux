@@ -1,4 +1,4 @@
-source "virtualbox-iso" "debian-scripted" {
+source "virtualbox-iso" "scripted" {
   format        = "ova"
   iso_interface = "sata"
 
@@ -15,7 +15,7 @@ source "virtualbox-iso" "debian-scripted" {
   guest_additions_mode = "upload"
 
   # Machine configurations
-  guest_os_type = "Debian_64"
+  guest_os_type = "${var.os}_64"
   # Must use SATA as VirtualBox doesn't currently support export of NVME disks
   hard_drive_interface     = "sata"
   hard_drive_discard       = true
@@ -57,8 +57,8 @@ source "virtualbox-iso" "debian-scripted" {
 
   boot_wait = "3s"
   boot_command = [
-    "e<wait2>",
-    "<down><down><end> noeject noprompt<f10><wait20>",
+    "e<wait3>",
+    "<down><down><end> noeject noprompt<f10><wait30>",
     "sudo su <enter>",
     "/usr/bin/wget -O config.bash https://raw.githubusercontent.com/brennanfee/linux-bootstraps/${var.script_branch}/scripted-installer/debian/${local.config_script} <enter><wait5>",
     "export AUTO_IS_DEBUG=${var.is_debug} <enter>",

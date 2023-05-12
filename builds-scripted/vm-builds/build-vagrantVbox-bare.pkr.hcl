@@ -1,10 +1,10 @@
 build {
-  source "sources.virtualbox-iso.debian-scripted" {
-    name             = "vagrantVbox-debian-bare"
+  source "sources.virtualbox-iso.scripted" {
+    name             = "scripted-vagrantVbox-bare"
     output_directory = "${path.root}/output-${source.name}"
-    keep_registered  = false
+    keep_registered  = "${var.preserve_image}"
     skip_export      = false
-    vm_name          = "bfee-vagrantVbox-debian-${var.edition}-bare"
+    vm_name          = "bfee-vagrantVbox-${var.os}-${var.edition}-bare"
     iso_url          = "https://cdimage.debian.org/images/unofficial/non-free/images-including-firmware/${local.iso_version}-live+nonfree/amd64/iso-hybrid/debian-live-${local.iso_version}-amd64-standard+nonfree.iso"
     iso_checksum     = "file:https://cdimage.debian.org/images/unofficial/non-free/images-including-firmware/${local.iso_version}-live+nonfree/amd64/iso-hybrid/SHA256SUMS"
   }

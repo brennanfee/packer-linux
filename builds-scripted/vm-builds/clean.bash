@@ -24,26 +24,23 @@ main() {
   local registered_vms
   registered_vms="$(VBoxManage list vms | cut -d" " -f 1)"
 
-  local supported_virtPlatforms=("vbox" "vagrantVbox")
-  local supported_distros=("debian" "ubuntu")
-  local supported_editions=("stable" "backports" "testing" "lts" "ltsedge" "rolling")
-  local supported_build_configs=("bare" "bios")
+  local vm_types=("vbox" "vagrantVbox")
+  local os_types=("debian" "ubuntu")
+  local editions=("stable" "testing" "backports" "lts" "ltsedge" "rolling")
+  local configurations=("bare")
 
-  for virtPlatform_to_check in "${supported_virtPlatforms[@]}"; do
-    for distro_to_check in "${supported_distros[@]}"; do
-      for edition_to_check in "${supported_editions[@]}"; do
-        for build_to_check in "${supported_build_configs[@]}"; do
-          local vm_to_check_for="local-${virtPlatform_to_check}-${distro_to_check}-${edition_to_check}-${build_to_check}"
-          local source_to_check_for="local-${virtPlatform_to_check}-${build_to_check}"
+  for vm_type in "${vm_types[@]}"; do
+    for os_type in "${os_types[@]}"; do
+      for edition in "${editions[@]}"; do
+        for config in "${configurations[@]}"; do
+          local vm_to_check_for="bfee-${vm_type}-${os_type}-${edition}-${config}"
+          local dir_to_check="output-scripted-${vm_type}-${config}"
 
-          # Remove the vm
           if [[ "${registered_vms}" == *"${vm_to_check_for}"* ]]; then
             echo "WARNING: Removing the '${vm_to_check_for}' VM"
             VBoxManage unregistervm "${vm_to_check_for}" --delete
           fi
 
-          # Now the output folder
-          local dir_to_check="${SCRIPT_DIR}/output-${source_to_check_for}"
           if [[ -d "${dir_to_check}" ]]; then
             echo "WARNING: Removing the '${dir_to_check}' directory"
             rm -rf "${dir_to_check}"
@@ -55,7 +52,7 @@ main() {
 
   if [[ -f "${SCRIPT_DIR}/packer-manifest.json" ]]; then
     echo "WARNING: Removing the packer manifest"
-    rm -f "${SCRIPT_DIR}/packer-manifest.json"
+    rm "${SCRIPT_DIR}/packer-manifest.json"
   fi
 
   # Delete any vagrant boxes

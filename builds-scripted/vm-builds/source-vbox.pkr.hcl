@@ -34,6 +34,8 @@ source "virtualbox-iso" "scripted" {
   audio_controller         = "hda"
   sound                    = "pulse"
 
+  disk_additional_size = "${var.additional_disks}"
+
   vboxmanage = [
     ["modifyvm", "{{.Name}}", "--paravirtprovider", "default"],
     ["modifyvm", "{{.Name}}", "--pae", "on"],

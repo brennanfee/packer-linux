@@ -41,7 +41,7 @@ function load_box() {
 
 function main() {
   local os_types=( "debian" "ubuntu" )
-  local editions=( "stable" "testing" "backports" "lts" "ltsedge" "rolling" )
+  local editions=( "stable" "testing" "backports" "backportsdual" "lts" "ltsedge" "rolling" )
   local configurations=( "bare" )
 
   echo "Searching..."

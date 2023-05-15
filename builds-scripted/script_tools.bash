@@ -20,8 +20,11 @@ fi
 ### START: Print Functions
 
 # Text modifiers
-RESET="$(tput sgr0)"
-BOLD="$(tput bold)"
+TEXT_RESET="$(tput sgr0)"
+TEXT_BOLD="$(tput bold)"
+TEXT_RED="$(tput setaf 1)"
+TEXT_GREEN="$(tput setaf 2)"
+TEXT_YELLOW="$(tput setaf 3)"
 
 print_line() {
   local T_COLS
@@ -38,41 +41,35 @@ print_status() {
   local T_COLS
   T_COLS=$(tput cols)
   T_COLS=$((T_COLS - 1))
-  echo -e "$1${RESET}" | fold -sw "${T_COLS}"
+  echo -e "$1${TEXT_RESET}" | fold -sw "${T_COLS}"
 }
 
 print_info() {
   local T_COLS
   T_COLS=$(tput cols)
   T_COLS=$((T_COLS - 1))
-  echo -e "${BOLD}$1${RESET}" | fold -sw "${T_COLS}"
+  echo -e "${TEXT_BOLD}$1${TEXT_RESET}" | fold -sw "${T_COLS}"
 }
 
 print_warning() {
-  local YELLOW
-  YELLOW="$(tput setaf 3)"
   local T_COLS
   T_COLS=$(tput cols)
   T_COLS=$((T_COLS - 1))
-  echo -e "${YELLOW}$1${RESET}" | fold -sw "${T_COLS}"
+  echo -e "${TEXT_YELLOW}$1${TEXT_RESET}" | fold -sw "${T_COLS}"
 }
 
 print_success() {
-  local GREEN
-  GREEN="$(tput setaf 2)"
   local T_COLS
   T_COLS=$(tput cols)
   T_COLS=$((T_COLS - 1))
-  echo -e "${GREEN}$1${RESET}" | fold -sw "${T_COLS}"
+  echo -e "${TEXT_GREEN}$1${TEXT_RESET}" | fold -sw "${T_COLS}"
 }
 
 print_error() {
-  local RED
-  RED="$(tput setaf 1)"
   local T_COLS
   T_COLS=$(tput cols)
   T_COLS=$((T_COLS - 1))
-  echo -e "${RED}$1${RESET}" | fold -sw "${T_COLS}"
+  echo -e "${TEXT_RED}$1${TEXT_RESET}" | fold -sw "${T_COLS}"
 }
 
 error_msg() {

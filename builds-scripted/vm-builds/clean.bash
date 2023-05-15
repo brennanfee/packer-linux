@@ -19,6 +19,9 @@ fi
 
 SCRIPT_DIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# shellcheck source=/dev/null
+source "${SCRIPT_DIR}/../script_tools.bash"
+
 main() {
   # First remove the VM's if they exist
   local registered_vms
@@ -26,7 +29,7 @@ main() {
 
   local vm_types=("vbox" "vagrantVbox")
   local os_types=("debian" "ubuntu")
-  local editions=("stable" "testing" "backports" "lts" "ltsedge" "rolling")
+  local editions=("stable" "testing" "backports" "backportsdual" "lts" "ltsedge" "rolling")
   local configurations=("bare")
 
   for vm_type in "${vm_types[@]}"; do
@@ -37,12 +40,12 @@ main() {
           local dir_to_check="output-scripted-${vm_type}-${config}"
 
           if [[ "${registered_vms}" == *"${vm_to_check_for}"* ]]; then
-            echo "WARNING: Removing the '${vm_to_check_for}' VM"
+            print_warning "WARNING: Removing the '${vm_to_check_for}' VM"
             VBoxManage unregistervm "${vm_to_check_for}" --delete
           fi
 
           if [[ -d "${dir_to_check}" ]]; then
-            echo "WARNING: Removing the '${dir_to_check}' directory"
+            print_warning "WARNING: Removing the '${dir_to_check}' directory"
             rm -rf "${dir_to_check}"
           fi
         done
@@ -51,12 +54,15 @@ main() {
   done
 
   if [[ -f "${SCRIPT_DIR}/packer-manifest.json" ]]; then
-    echo "WARNING: Removing the packer manifest"
+    print_warning "WARNING: Removing the packer manifest"
     rm "${SCRIPT_DIR}/packer-manifest.json"
   fi
 
   # Delete any vagrant boxes
   find "${SCRIPT_DIR}" -iname "*.box" -delete
+
+  echo ""
+  print_success "Clean Complete"
 }
 
 main

@@ -36,7 +36,7 @@ EDITIONS=()
 CONFIGS=()
 
 SUPPORTED_VM_TYPES=("vbox" "virtualbox" "vagrant-vbox" "vagrant-virtualbox")
-SUPPORTED_EDITIONS=("stable" "testing" "backports" "lts" "ltsedge" "rolling")
+SUPPORTED_EDITIONS=("stable" "testing" "backports" "backportsdual" "lts" "ltsedge" "rolling")
 SUPPORTED_CONFIGS=("bare")
 
 show_help() {
@@ -49,23 +49,23 @@ show_help() {
   blank_line
   print_status "There are two parameters available: "
   blank_line
-  print_status "  build <vm type> <os edition> <configuration>"
+  print_status "  build <vm type> <os\editions> <configuration>"
   blank_line
   print_status "Basic usage:"
   blank_line
-  print_status "Values can be omitted from the right toward the left of the options."$(
-  )" Multiple values can be passed by comma-separating the values, so 'vbox,vagrant-vbox'"$(
-  )" both Virtualbox and the Vagrant Virtualbox flavor VMs.  Alternatively you can pass '*'"$(
-  )" 'all' to indicate all of that type.  An omitted option accepts the default for that"$(
-  )" option, which is 'all'."
+  print_status "Values can be omitted from the right toward the left of the options." \
+  " Multiple values can be passed by comma-separating the values, so 'vbox,vagrant-vbox'" \
+  " both Virtualbox and the Vagrant Virtualbox flavor VMs.  Alternatively you can pass '*'" \
+  " 'all' to indicate all of that type.  An omitted option accepts the default for that" \
+  " option, which is 'all'."
   blank_line
   print_status "  VM Type: Can be 'vbox', 'virtualbox', 'vagrant-vbox', or 'vagrant-virtualbox'"
-  print_status "  OS Edition: Can be either 'stable', 'testing', 'lts', 'ltsedge', or rolling'"$(
-  )" and refers to the branch of Debian (for stable and testing) or Ubuntu (for lts,'"$(
-  )" ltsedge, or rolling) to be installed."
-  print_status "  Configuration: This is the machine configuration.  'bare', 'server',"$(
-  )" 'desktop' are currently supported, later this will be just a pass-through with"$(
-  )" no verification to any configuration script I decide to build."
+  print_status "  OS Edition: Can be either 'stable', 'testing', 'lts', 'ltsedge', or rolling'" \
+  " and refers to the branch of Debian (for stable and testing) or Ubuntu (for lts,'" \
+  " ltsedge, or rolling) to be installed."
+  print_status "  Configuration: This is the machine configuration.  'bare', 'server'," \
+  " 'desktop' are currently supported, later this will be just a pass-through with" \
+  " no verification to any configuration script I decide to build."
   blank_line
 
   if [[ "${HELP}" == "false" ]]; then
@@ -136,15 +136,20 @@ for arg; do
 done
 
 parse_vm_types() {
+  local TEMP_ARRAY=()
   local VM_TYPES_TEMP=()
+  if [[ "${VM_TYPES_STRING}" == "" ]]; then
+    VM_TYPES_STRING="all"
+  fi
+
   IFS=',' read -r -a TEMP_ARRAY <<<"${VM_TYPES_STRING}"
   for i in "${TEMP_ARRAY[@]}"; do
-    if [[ "${i}" == "*" || "${i}" == "all" ]]; then
+    if [[ "${i}" == "all" ]]; then
       VM_TYPES_TEMP=("${SUPPORTED_VM_TYPES[@]}")
     else
       get_exit_code contains_element "${i}" "${SUPPORTED_VM_TYPES[@]}"
       if [[ ! ${EXIT_CODE} == "0" ]]; then
-        error_msg "Invalid option for VM type '${i}', use one of 'vbox', 'virtualbox', 'vagrant-vbox' or 'vagrant-virtualbox'"
+        print_error "Invalid option for VM type '${i}', use one of 'vbox', 'virtualbox', 'vagrant-vbox' or 'vagrant-virtualbox'"
       fi
 
       VM_TYPES_TEMP+=("${i}")
@@ -174,11 +179,20 @@ parse_vm_types() {
 }
 
 parse_editions() {
+  local TEMP_ARRAY=()
   local EDITIONS_TEMP=()
+  if [[ "${EDITIONS_STRING}" == "" ]]; then
+    EDITIONS_STRING="all"
+  fi
+
   IFS=',' read -r -a TEMP_ARRAY <<<"${EDITIONS_STRING}"
   for i in "${TEMP_ARRAY[@]}"; do
-    if [[ "${i}" == "*" || "${i}" == "all" ]]; then
+    if [[ "${i}" == "all" ]]; then
       EDITIONS_TEMP=("${SUPPORTED_EDITIONS[@]}")
+    elif [[ "${i}" == "debian" ]]; then
+      EDITIONS_TEMP+=( "stable" "testing" "backports" "backportsdual" )
+    elif [[ "${i}" == "ubuntu" ]]; then
+      EDITIONS_TEMP+=( "lts" "ltsedge" "rolling" )
     else
       get_exit_code contains_element "${i}" "${SUPPORTED_EDITIONS[@]}"
       if [[ ! ${EXIT_CODE} == "0" ]]; then
@@ -188,7 +202,6 @@ parse_editions() {
       EDITIONS_TEMP+=("${i}")
     fi
   done
-
   # Remove duplicates
   while IFS= read -r -d '' x; do
     EDITIONS+=("${x}")
@@ -196,7 +209,12 @@ parse_editions() {
 }
 
 parse_configs() {
+  local TEMP_ARRAY=()
   local CONFIGS_TEMP=()
+  if [[ "${CONFIGS_STRING}" == "" ]]; then
+    CONFIGS_STRING="all"
+  fi
+
   IFS=',' read -r -a TEMP_ARRAY <<<"${CONFIGS_STRING}"
   for i in "${TEMP_ARRAY[@]}"; do
     if [[ "${i}" == "*" || "${i}" == "all" ]]; then
@@ -284,6 +302,9 @@ main() {
   done
 
   #TODO: Add error handling after the packer call
+
+  echo ""
+  print_success "Build Complete"
 }
 
 main "$@"

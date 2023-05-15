@@ -33,6 +33,11 @@ variable "is_debug" {
   default = "0"
 }
 
+variable "additional_disks" {
+  type    = list(number)
+  default = []
+}
+
 locals {
   iso_version = "11.7.0"
 

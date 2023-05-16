@@ -2,7 +2,7 @@ source "virtualbox-iso" "scripted" {
   format        = "ova"
   iso_interface = "sata"
 
-  headless        = false
+  headless        = true
 
   communicator = "ssh"
   ssh_username = "${var.username}"

@@ -2,11 +2,10 @@
 
 # Bash strict mode
 ([[ -n ${ZSH_EVAL_CONTEXT:-} && ${ZSH_EVAL_CONTEXT:-} =~ :file$ ]] ||
- [[ -n ${BASH_VERSION:-} ]] && (return 0 2>/dev/null)) && SOURCED=true || SOURCED=false
-if ! ${SOURCED}
-then
-  set -o errexit # same as set -e
-  set -o nounset # same as set -u
+  [[ -n ${BASH_VERSION:-} ]] && (return 0 2>/dev/null)) && SOURCED=true || SOURCED=false
+if ! ${SOURCED}; then
+  set -o errexit  # same as set -e
+  set -o nounset  # same as set -u
   set -o errtrace # same as set -E
   set -o pipefail
   set -o posix
@@ -20,8 +19,7 @@ fi
 
 # Must be root
 cur_user=$(id -u)
-if [[ ${cur_user} -ne 0 ]]
-then
+if [[ ${cur_user} -ne 0 ]]; then
   echo "This script must be run as root."
   exit 1
 fi
@@ -31,27 +29,26 @@ main() {
   local in_virtualbox
   in_virtualbox=$(lspci | grep -c VirtualBox)
 
-  if [[ ${in_virtualbox} -ge 1 ]]
-  then
+  if [[ ${in_virtualbox} -ge 1 ]]; then
     local distro
     distro=$(lsb_release -i -s | tr '[:upper:]' '[:lower:]')
 
-    if [[ "${distro}" = "debian" ]]
-    then
+    DEBIAN_FRONTEND=noninteractive apt-get update
+
+    if [[ "${distro}" = "debian" ]]; then
       # Need to ensure the linux headers are installed so it can compile the module
       DEBIAN_FRONTEND=noninteractive apt-get install -y -q --no-install-recommends linux-image-amd64 linux-headers-amd64
 
       # If a UEFI install, fix the EFI boot
       if [[ -d "/boot/efi/" ]]; then
         if [[ ! -f "/boot/efi/startup.nsh" ]]; then
-          echo "FS0:" > /boot/efi/startup.nsh
-          echo "\EFI\debian\grubx64.efi" >> /boot/efi/startup.nsh
+          echo "FS0:" >/boot/efi/startup.nsh
+          echo "\EFI\debian\grubx64.efi" >>/boot/efi/startup.nsh
         fi
 
         DEBIAN_FRONTEND=noninteractive apt-get install -y -q --no-install-recommends efibootmgr
 
-        if ! efibootmgr | grep -i -q '\* debian'
-        then
+        if ! efibootmgr | grep -i -q '\* debian'; then
           efi_disk=$(lsblk -np -o PKNAME,MOUNTPOINT | grep -i "/boot/efi" | cut -d' ' -f 1)
           efi_device=$(lsblk -np -o PATH,MOUNTPOINT | grep -i "/boot/efi" | cut -d' ' -f 1)
           efi_part="$(udevadm info --query=property --name="${efi_device}" | grep -i ID_PART_ENTRY_NUM | cut -d= -f 2)"
@@ -61,17 +58,19 @@ main() {
       fi
     fi
 
+    ### Install libxt6 which is a prerequisite
+    DEBIAN_FRONTEND=noninteractive apt-get install -y -q --no-install-recommends libxt6
+
     ### Install the guest additions using the ISO
 
-    # NOTE: Why the ISO?  In Debian the guest addition packages are no longer available and while Ubuntu offers them, this provides consistency.  If this script is being used in a packer envrionment, then the guest additions uploaded by it will be used.  If not, the ISO will be downloaded automatically.
+    # NOTE: Why the ISO?  In Debian the guest addition packages are no longer available and while Ubuntu offers them, this provides consistency.  If this script is being used in a packer environment, then the guest additions uploaded by it will be used.  If not, the ISO will be downloaded automatically.
 
     # Can't use $USER as we are running this script as root/sudo
     local current_user
     current_user=$(logname)
 
     # Determine if we need to download the ISO and do so if needed
-    if [[ ! -f "/home/${current_user}/VBoxGuestAdditions.iso" ]]
-    then
+    if [[ ! -f "/home/${current_user}/VBoxGuestAdditions.iso" ]]; then
       # Figure out which version to download
       /usr/bin/wget --output-document "/home/${current_user}/LATEST-STABLE.TXT" https://download.virtualbox.org/virtualbox/LATEST-STABLE.TXT
       local vb_version
@@ -95,16 +94,13 @@ main() {
     local group_exists
     group_exists=$(getent group vboxsf | wc -l || true)
 
-    if [[ ${group_exists} == "1" ]]
-    then
+    if [[ ${group_exists} == "1" ]]; then
       local usersToAdd=("${current_user}" vagrant)
 
-      for userToAdd in "${usersToAdd[@]}"
-      do
+      for userToAdd in "${usersToAdd[@]}"; do
         local user_exists
         user_exists=$(getent passwd "${userToAdd}" | wc -l || true)
-        if [[ "${user_exists}" -eq 1 ]]
-        then
+        if [[ "${user_exists}" -eq 1 ]]; then
           usermod -a -G vboxsf "${userToAdd}"
         fi
       done

@@ -1,38 +1,44 @@
 # -*- mode: ruby -*-
-# vi: set ft=ruby :
+# vim: set ft=ruby:
 
-Vagrant.require_version ">= 2.2"
+Vagrant.require_version '>= 2.2'
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
-Vagrant.configure("2") do |config|
+Vagrant.configure('2') do |config|
   # The most common configuration options are documented and commented below.
   # For a complete reference, please see the online documentation at
   # https://docs.vagrantup.com.
 
-  config.vm.box = "bfee-vagrantVbox-ubuntu-rolling-bare"
+  config.vm.box = 'bfee-vagrantVbox-ubuntu-rolling-bare'
 
-  config.vm.synced_folder ".", "/vagrant"
+  config.vm.synced_folder '.', '/vagrant'
 
-  config.vm.provider "virtualbox" do |vb|
+  config.vm.provider 'virtualbox' do |vb|
+    vb.name = 'packer-ubuntu-rolling-bare'
     vb.gui = false
   end
 
-  config.vm.provision "ansible", run: "always" do |ansible|
-    ansible.playbook = "../../ping.yml"
-    ansible.compatibility_mode = "2.0"
-#    ansible.verbose = "vvvv"
+  config.vm.provision 'ansible', run: 'always' do |ansible|
+    ansible.playbook = '../../ansible/ping.yml'
+    ansible.compatibility_mode = '2.0'
+    #    ansible.verbose = "vvvv"
   end
   if ARGV.include? '--provision-with'
-    config.vm.provision "ping", type: "ansible", run: "always" do |ansible|
-      ansible.playbook = "../../ping.yml"
-      ansible.compatibility_mode = "2.0"
+    config.vm.provision 'ping', type: 'ansible', run: 'always' do |ansible|
+      ansible.playbook = '../../ansible/ping.yml'
+      ansible.compatibility_mode = '2.0'
     end
-    config.vm.provision "facts", type: "ansible", run: "always" do |ansible|
-      ansible.playbook = "../../facts.yml"
-      ansible.compatibility_mode = "2.0"
+    config.vm.provision 'facts', type: 'ansible', run: 'always' do |ansible|
+      ansible.playbook = '../../ansible/facts.yml'
+      ansible.compatibility_mode = '2.0'
+      ansible.host_vars = {
+        'default' => {
+          'test_key' => 'some value'
+        }
+      }
     end
   end
 end

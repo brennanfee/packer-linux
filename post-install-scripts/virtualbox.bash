@@ -59,7 +59,7 @@ main() {
     fi
 
     ### Install libxt6 which is a prerequisite
-    DEBIAN_FRONTEND=noninteractive apt-get install -y -q --no-install-recommends libxt6
+    DEBIAN_FRONTEND=noninteractive apt-get install -y -q --no-install-recommends libxt6 libxmu6
 
     ### Install the guest additions using the ISO
 

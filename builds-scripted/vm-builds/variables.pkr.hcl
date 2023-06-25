@@ -14,12 +14,12 @@ variable "username" {
 }
 
 variable "password" {
-  type      = string
-  default   = "debian"
+  type    = string
+  default = "debian"
 }
 
 variable "script_branch" {
-  type = string
+  type    = string
   default = "main"
 }
 
@@ -29,7 +29,7 @@ variable "preserve_image" {
 }
 
 variable "is_debug" {
-  type = string
+  type    = string
   default = "0"
 }
 
@@ -39,7 +39,7 @@ variable "additional_disks" {
 }
 
 locals {
-  iso_version = "11.7.0"
+  iso_version = "12.0.0"
 
   config_script = "${var.os}-my-configs/${var.edition}-vm.bash"
 }

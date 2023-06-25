@@ -5,12 +5,12 @@ build {
     keep_registered  = "${var.preserve_image}"
     skip_export      = false
     vm_name          = "bfee-vagrantVbox-${var.os}-${var.edition}-bare"
-    iso_url          = "https://cdimage.debian.org/images/unofficial/non-free/images-including-firmware/${local.iso_version}-live+nonfree/amd64/iso-hybrid/debian-live-${local.iso_version}-amd64-standard+nonfree.iso"
-    iso_checksum     = "file:https://cdimage.debian.org/images/unofficial/non-free/images-including-firmware/${local.iso_version}-live+nonfree/amd64/iso-hybrid/SHA256SUMS"
+    iso_url          = "https://cdimage.debian.org/images/release/${local.iso_version}-live/amd64/iso-hybrid/debian-live-${local.iso_version}-amd64-standard.iso"
+    iso_checksum     = "file:https://cdimage.debian.org/images/release/${local.iso_version}-live/amd64/iso-hybrid/SHA256SUMS"
   }
 
   provisioner "shell" {
-    execute_command = "echo '${var.password}' | {{.Vars}} sudo -S -H -E bash -c '{{.Path}}'"
+    execute_command   = "echo '${var.password}' | {{.Vars}} sudo -S -H -E bash -c '{{.Path}}'"
     expect_disconnect = true
     scripts = [
       "${path.root}/../../post-install-scripts/updates.bash",

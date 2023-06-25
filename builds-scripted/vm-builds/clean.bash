@@ -20,7 +20,7 @@ fi
 SCRIPT_DIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # shellcheck source=/dev/null
-source "${SCRIPT_DIR}/../script_tools.bash"
+source "${SCRIPT_DIR}/../../script-tools.bash"
 
 main() {
   # First remove the VM's if they exist

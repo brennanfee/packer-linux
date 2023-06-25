@@ -19,7 +19,7 @@ variable "preserve_image" {
 }
 
 variable "is_debug" {
-  type = string
+  type    = string
   default = "0"
 }
 
@@ -28,11 +28,11 @@ variable "test_case_config_file" {
 }
 
 variable "test_case_verification_script" {
-  type = string
+  type    = string
   default = "noop.bash"
 }
 
 locals {
-  debian_iso_version = "11.6.0"
+  debian_iso_version = "12.0.0"
   ubuntu_iso_version = "22.04.2"
 }

@@ -18,10 +18,9 @@ fi
 # END Bash strict mode
 
 SCRIPT_DIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-EXIT_CODE=0
 
 # shellcheck source=/dev/null
-source "${SCRIPT_DIR}/../script_tools.bash"
+source "${SCRIPT_DIR}/../../script-tools.bash"
 
 # Defaults
 VM_TYPES_STRING="vbox"
@@ -47,25 +46,25 @@ show_help() {
 
   print_status "build Help"
   blank_line
-  print_status "There are two parameters available: "
+  print_status "There are three parameters available: "
   blank_line
   print_status "  build <vm type> <os\editions> <configuration>"
   blank_line
   print_status "Basic usage:"
   blank_line
   print_status "Values can be omitted from the right toward the left of the options." \
-  " Multiple values can be passed by comma-separating the values, so 'vbox,vagrant-vbox'" \
-  " both Virtualbox and the Vagrant Virtualbox flavor VMs.  Alternatively you can pass '*'" \
-  " 'all' to indicate all of that type.  An omitted option accepts the default for that" \
-  " option, which is 'all'."
+    " Multiple values can be passed by comma-separating the values, so 'vbox,vagrant-vbox'" \
+    " both Virtualbox and the Vagrant Virtualbox flavor VMs.  Alternatively you can pass" \
+    " 'all' to indicate all of that type.  An omitted option accepts the default for that" \
+    " option, which is 'all'."
   blank_line
   print_status "  VM Type: Can be 'vbox', 'virtualbox', 'vagrant-vbox', or 'vagrant-virtualbox'"
   print_status "  OS Edition: Can be either 'stable', 'testing', 'lts', 'ltsedge', or rolling'" \
-  " and refers to the branch of Debian (for stable and testing) or Ubuntu (for lts,'" \
-  " ltsedge, or rolling) to be installed."
+    " and refers to the branch of Debian (for stable and testing) or Ubuntu (for lts,'" \
+    " ltsedge, or rolling) to be installed."
   print_status "  Configuration: This is the machine configuration.  'bare', 'server'," \
-  " 'desktop' are currently supported, later this will be just a pass-through with" \
-  " no verification to any configuration script I decide to build."
+    " 'desktop' are currently supported, later this will be just a pass-through with" \
+    " no verification to any configuration script I decide to build."
   blank_line
 
   if [[ "${HELP}" == "false" ]]; then
@@ -190,9 +189,9 @@ parse_editions() {
     if [[ "${i}" == "all" ]]; then
       EDITIONS_TEMP=("${SUPPORTED_EDITIONS[@]}")
     elif [[ "${i}" == "debian" ]]; then
-      EDITIONS_TEMP+=( "stable" "testing" "backports" "backportsdual" )
+      EDITIONS_TEMP+=("stable" "testing" "backports" "backportsdual")
     elif [[ "${i}" == "ubuntu" ]]; then
-      EDITIONS_TEMP+=( "lts" "ltsedge" "rolling" )
+      EDITIONS_TEMP+=("lts" "ltsedge" "rolling")
     else
       get_exit_code contains_element "${i}" "${SUPPORTED_EDITIONS[@]}"
       if [[ ! ${EXIT_CODE} == "0" ]]; then

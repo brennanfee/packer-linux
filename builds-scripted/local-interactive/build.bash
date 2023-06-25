@@ -15,13 +15,12 @@ if ! ${SOURCED}; then
   shopt -s extdebug
   IFS=$(printf '\n\t')
 fi
-# END Bash strict mode
 
 SCRIPT_DIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-EXIT_CODE=0
+# END Bash strict mode
 
 # shellcheck source=/dev/null
-source "${SCRIPT_DIR}/../script_tools.bash"
+source "${SCRIPT_DIR}/../../script-tools.bash"
 
 ## Defaults
 OS="debian"

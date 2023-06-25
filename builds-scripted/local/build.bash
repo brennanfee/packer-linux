@@ -18,10 +18,9 @@ fi
 # END Bash strict mode
 
 SCRIPT_DIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-EXIT_CODE=0
 
 # shellcheck source=/dev/null
-source "${SCRIPT_DIR}/../script_tools.bash"
+source "${SCRIPT_DIR}/../../script-tools.bash"
 
 ## Defaults
 CONFIG="bare"

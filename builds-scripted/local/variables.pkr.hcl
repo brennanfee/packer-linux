@@ -34,7 +34,7 @@ variable "password" {
 }
 
 locals {
-  iso_version = "11.6.0"
+  iso_version = "12.0.0"
 
   config_script = "${var.os}-my-configs/${var.edition}-${var.script_config_type}.bash"
 }

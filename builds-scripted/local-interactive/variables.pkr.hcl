@@ -24,5 +24,5 @@ variable "password" {
 }
 
 locals {
-  iso_version = "11.6.0"
+  iso_version = "12.0.0"
 }

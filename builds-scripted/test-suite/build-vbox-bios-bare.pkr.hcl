@@ -5,8 +5,8 @@ build {
     keep_registered  = "${var.preserve_image}"
     skip_export      = true
     vm_name          = "test-vbox-bios-bare"
-    iso_url          = "https://cdimage.debian.org/images/unofficial/non-free/images-including-firmware/${local.debian_iso_version}-live+nonfree/amd64/iso-hybrid/debian-live-${local.debian_iso_version}-amd64-standard+nonfree.iso"
-    iso_checksum     = "file:https://cdimage.debian.org/images/unofficial/non-free/images-including-firmware/${local.debian_iso_version}-live+nonfree/amd64/iso-hybrid/SHA256SUMS"
+    iso_url          = "https://cdimage.debian.org/images/release/${local.iso_version}-live/amd64/iso-hybrid/debian-live-${local.iso_version}-amd64-standard.iso"
+    iso_checksum     = "file:https://cdimage.debian.org/images/release/${local.iso_version}-live/amd64/iso-hybrid/SHA256SUMS"
 
     firmware = "bios"
 
@@ -30,9 +30,9 @@ build {
   }
 
   provisioner "file" {
-    source = "/srv/test-results.txt"
+    source      = "/srv/test-results.txt"
     destination = "test-results.txt"
-    direction = "download"
+    direction   = "download"
   }
 
   post-processor "manifest" {

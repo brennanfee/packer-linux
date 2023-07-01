@@ -5,8 +5,8 @@ build {
     keep_registered  = "${var.preserve_image}"
     skip_export      = true
     vm_name          = "test-vbox-bios-bare"
-    iso_url          = "https://cdimage.debian.org/images/release/${local.iso_version}-live/amd64/iso-hybrid/debian-live-${local.iso_version}-amd64-standard.iso"
-    iso_checksum     = "file:https://cdimage.debian.org/images/release/${local.iso_version}-live/amd64/iso-hybrid/SHA256SUMS"
+    iso_url          = "file:${path.root}/../../ISOs/debian/debian-live-amd64-standard.iso"
+    iso_checksum     = "file:${path.root}/../../ISOs/debian/SHA256SUMS"
 
     firmware = "bios"
 

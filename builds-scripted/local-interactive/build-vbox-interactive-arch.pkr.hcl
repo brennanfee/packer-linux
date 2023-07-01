@@ -5,8 +5,8 @@ build {
     keep_registered  = true
     skip_export      = true
     vm_name          = "local-vbox-interactive-arch"
-    iso_url          = "https://mirror.rackspace.com/archlinux/iso/${local.arch_iso_version}/archlinux-${local.arch_iso_version}-x86_64.iso"
-    iso_checksum     = "file:https://mirror.rackspace.com/archlinux/iso/${local.arch_iso_version}/sha256sums.txt"
+    iso_url          = "file:${path.root}/../../ISOs/arch/archlinux-x86_64.iso"
+    iso_checksum     = "file:${path.root}/../../ISOs/arch/sha256sums.txt"
   }
 
   provisioner "shell" {

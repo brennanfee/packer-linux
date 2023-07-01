@@ -37,7 +37,3 @@ variable "additional_disks" {
   type    = list(number)
   default = []
 }
-
-locals {
-  iso_version = "12.0.0"
-}

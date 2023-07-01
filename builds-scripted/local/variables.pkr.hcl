@@ -33,6 +33,3 @@ variable "password" {
   default = "debian"
 }
 
-locals {
-  iso_version = "12.0.0"
-}

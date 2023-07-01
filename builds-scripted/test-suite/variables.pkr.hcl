@@ -31,8 +31,3 @@ variable "test_case_verification_script" {
   type    = string
   default = "noop.bash"
 }
-
-locals {
-  debian_iso_version = "12.0.0"
-  ubuntu_iso_version = "22.04.2"
-}

@@ -5,8 +5,8 @@ build {
     keep_registered  = "${var.preserve_image}"
     skip_export      = true
     vm_name          = "test-vbox-ubuntu-bare"
-    iso_url          = "https://releases.ubuntu.com/${local.ubuntu_iso_version}/ubuntu-${local.ubuntu_iso_version}-live-server-amd64.iso"
-    iso_checksum     = "file:https://releases.ubuntu.com/${local.ubuntu_iso_version}/SHA256SUMS"
+    iso_url          = "file:${path.root}/../../ISOs/ubuntu/ubuntu-live-server-amd64.iso"
+    iso_checksum     = "file:${path.root}/../../ISOs/ubuntu/SHA256SUMS"
 
     firmware = "efi"
 
@@ -30,9 +30,9 @@ build {
   }
 
   provisioner "file" {
-    source = "/srv/test-results.txt"
+    source      = "/srv/test-results.txt"
     destination = "test-results.txt"
-    direction = "download"
+    direction   = "download"
   }
 
   post-processor "manifest" {

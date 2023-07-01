@@ -27,8 +27,3 @@ variable "password" {
   type    = string
   default = "debian"
 }
-
-locals {
-  debian_iso_version = "12.0.0"
-  arch_iso_version   = "2023.07.01"
-}

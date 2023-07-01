@@ -4,7 +4,7 @@ source "virtualbox-iso" "scripted" {
 
   headless = false
 
-  http_directory = "${path.root}/../../../linux-bootstraps/scripted-installer/${var.os}/"
+  http_directory = "${path.root}/../../../linux-bootstraps/scripted-installer/${var.platform}/"
 
   communicator           = "ssh"
   ssh_username           = "${var.username}"
@@ -64,7 +64,7 @@ source "virtualbox-iso" "scripted" {
     "e<wait2>",
     "<down><down><end> noeject noprompt<f10><wait20>",
     "sudo su <enter>",
-    "/usr/bin/wget -O config.bash http://{{ .HTTPIP }}:{{ .HTTPPort }}/deb-install-interactive.bash<enter><wait5>",
+    "/usr/bin/wget -O config.bash http://{{ .HTTPIP }}:{{ .HTTPPort }}/${var.prefix}-install-interactive.bash<enter><wait5>",
     # Run the installer
     "/usr/bin/bash ./config.bash<enter>",
   ]

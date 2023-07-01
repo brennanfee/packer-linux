@@ -4,6 +4,8 @@ source "virtualbox-iso" "scripted" {
 
   headless        = true
 
+  http_directory = "${path.root}/../bootstrap-configs"
+
   communicator = "ssh"
   ssh_username = "${var.username}"
   ssh_password = "${var.password}"
@@ -62,10 +64,8 @@ source "virtualbox-iso" "scripted" {
     "e<wait3>",
     "<down><down><end> noeject noprompt<f10><wait30>",
     "sudo su <enter>",
-    "/usr/bin/wget -O config.bash https://raw.githubusercontent.com/brennanfee/linux-bootstraps/${var.script_branch}/scripted-installer/debian/${local.config_script} <enter><wait5>",
+    "/usr/bin/wget -O config.bash http://{{ .HTTPIP }}:{{ .HTTPPort }}/${var.os}/${var.vm_type}-${var.edition}.bash <enter><wait5>",
     "export AUTO_IS_DEBUG=${var.is_debug} <enter>",
-    "export AUTO_USERNAME=${var.username} <enter>",
-    "export AUTO_USER_PWD=${var.password} <enter>",
     "/usr/bin/bash ./config.bash --auto-mode<enter>",
   ]
 }

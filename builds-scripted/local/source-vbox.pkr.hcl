@@ -4,7 +4,7 @@ source "virtualbox-iso" "scripted" {
 
   headless = false
 
-  http_directory = "${path.root}/../../../linux-bootstraps/scripted-installer/debian/"
+  http_directory = "${path.root}/../../../"
 
   communicator           = "ssh"
   ssh_username           = "${var.username}"

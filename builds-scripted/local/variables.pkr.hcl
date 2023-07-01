@@ -8,11 +8,6 @@ variable "edition" {
   default = "stable"
 }
 
-variable "script_config_type" {
-  type    = string
-  default = "vm"
-}
-
 variable "additional_disks" {
   type    = list(number)
   default = []
@@ -40,6 +35,4 @@ variable "password" {
 
 locals {
   iso_version = "12.0.0"
-
-  config_script = "${var.os}-my-configs/${var.edition}-${var.script_config_type}.bash"
 }

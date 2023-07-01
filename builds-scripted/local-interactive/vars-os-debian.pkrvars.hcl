@@ -1,2 +1,2 @@
-os     = "debian"
-prefix = "deb"
+platform        = "debian"
+platform_prefix = "deb"

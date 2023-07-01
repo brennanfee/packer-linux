@@ -1,12 +1,12 @@
 build {
   source "sources.virtualbox-iso.scripted" {
-    name             = "local-vbox-interactive-bare"
+    name             = "local-vbox-interactive-debian"
     output_directory = "${path.root}/output-${source.name}"
     keep_registered  = true
     skip_export      = true
-    vm_name          = "local-vbox-interactive-bare"
-    iso_url          = "https://cdimage.debian.org/images/release/${local.iso_version}-live/amd64/iso-hybrid/debian-live-${local.iso_version}-amd64-standard.iso"
-    iso_checksum     = "file:https://cdimage.debian.org/images/release/${local.iso_version}-live/amd64/iso-hybrid/SHA256SUMS"
+    vm_name          = "local-vbox-interactive-debian"
+    iso_url          = "https://cdimage.debian.org/images/release/${local.debian_iso_version}-live/amd64/iso-hybrid/debian-live-${local.debian_iso_version}-amd64-standard.iso"
+    iso_checksum     = "file:https://cdimage.debian.org/images/release/${local.debian_iso_version}-live/amd64/iso-hybrid/SHA256SUMS"
   }
 
   provisioner "shell" {

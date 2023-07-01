@@ -198,3 +198,5 @@ logs/
 images/
 output/
 packer-manifest.json
+builds-scripted/test-suite/test-results.txt
+builds-scripted/test-suite/test-report.txt

@@ -27,6 +27,7 @@ CONFIG="bare"
 EDITION="stable"
 DISK_CONFIG="single"
 ENCRYPTED="false"
+DEBUG="false"
 HELP="false"
 
 show_help() {
@@ -39,17 +40,19 @@ show_help() {
   blank_line
   print_status "There are three parameters available: "
   blank_line
-  print_status "  build <configuration> <os edition> <disk configuration>"
+  print_status "  build [options] <os edition> <disk configuration> <configuration>"
   blank_line
   print_status "Basic usage:"
   blank_line
   print_status "Values can be omitted from the right toward the left of the options. An omitted option accepts the default for that option.  The options are ordered in order of importance and most common usage."
   blank_line
-  print_status "  Configuration: This is the machine configuration.  In this local test location only 'bare' and 'bios' are supported.  The default is 'bare'."
   print_status "  OS Edition: Can be 'stable', 'backports', or 'testing' for Debian or 'lts', 'ltsedge' and 'rolling' for Ubuntu.  Each refers to the branch of OS you want to install.  The default value is 'stable' ('lts' for Ubuntu')."
   print_status "  Disk Configuration: Can be either 'single' or 'multi' for a single or multi-disk configuration. The default value is 'single'."
+  print_status "  Configuration: This is the machine configuration.  In this local test location only 'bare' and 'bios' are supported.  The default is 'bare'."
   blank_line
   print_status "A -e or --encrypted option can be included which will produce disks that are encrypted.  The default is to not encrypt the drives, which for virtual machines is usually preferred."
+  blank_line
+  print_status "A -d or --debug option can be included which will turn on debug mode."
   blank_line
 
   if [[ "${HELP}" == "false" ]]; then
@@ -59,7 +62,7 @@ show_help() {
   fi
 }
 
-ARGS=$(getopt --options eh --longoptions "encrypted,help" -- "$@")
+ARGS=$(getopt --options edh --longoptions "encrypted,debug,help" -- "$@")
 
 # shellcheck disable=SC2181
 if [[ $? -ne 0 ]]; then
@@ -80,6 +83,11 @@ while true; do
     shift
     continue
     ;;
+  '-d' | '--debug')
+    DEBUG="true"
+    shift
+    continue
+    ;;
   '--')
     shift
     break
@@ -94,13 +102,13 @@ ARG_COUNT=1
 for arg; do
   case "${ARG_COUNT}" in
   1)
-    CONFIG="${arg}"
-    ;;
-  2)
     EDITION=$(echo "${arg}" | tr "[:upper:]" "[:lower:]")
     ;;
-  3)
+  2)
     DISK_CONFIG=$(echo "${arg}" | tr "[:upper:]" "[:lower:]")
+    ;;
+  3)
+    CONFIG="${arg}"
     ;;
   4)
     break
@@ -153,21 +161,24 @@ main() {
 
   local vars_edition_file="${SCRIPT_DIR}/vars-edition-${EDITION}.pkrvars.hcl"
   local vars_disk_config_file="${SCRIPT_DIR}/vars-disk-${DISK_CONFIG}.pkrvars.hcl"
-  local vars_disk_encrypted_file=""
 
+  local vars_debug="is_debug=0"
+  if [[ "${DEBUG}" == "true" ]]; then
+    vars_debug="is_debug=1"
+  fi
+
+  local vars_encrypted="auto_encrypt_disk=0"
   if [[ "${ENCRYPTED}" == "true" ]]; then
-    vars_disk_encrypted_file="${SCRIPT_DIR}/vars-disksEncrypted.pkrvars.hcl"
-  else
-    vars_disk_encrypted_file="${SCRIPT_DIR}/vars-disksNotEncrypted.pkrvars.hcl"
+    vars_encrypted="auto_encrypt_disk=1"
   fi
 
   # Run clean
   "${SCRIPT_DIR}/clean.bash"
 
   # Run packer
-  packer build -var-file="${vars_edition_file}" \
+  packer build -var "${vars_debug}" -var "${vars_encrypted}" \
+    -var-file="${vars_edition_file}" \
     -var-file="${vars_disk_config_file}" \
-    -var-file="${vars_disk_encrypted_file}" \
     -only="${build_config}" "${SCRIPT_DIR}"
 }
 

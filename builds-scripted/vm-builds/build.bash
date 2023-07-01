@@ -59,9 +59,9 @@ show_help() {
     " option, which is 'all'."
   blank_line
   print_status "  VM Type: Can be 'vbox', 'virtualbox', 'vagrant-vbox', or 'vagrant-virtualbox'"
-  print_status "  OS Edition: Can be either 'stable', 'testing', 'lts', 'ltsedge', or rolling'" \
-    " and refers to the branch of Debian (for stable and testing) or Ubuntu (for lts,'" \
-    " ltsedge, or rolling) to be installed."
+  print_status "  OS Edition: Can be either 'stable', 'backports', 'testing', 'lts', 'ltsedge'," \
+    " or 'rolling' and refers to the branch of Debian (for stable, backports, or testing) or" \
+    " Ubuntu (for lts, ltsedge, or rolling) to be installed."
   print_status "  Configuration: This is the machine configuration.  'bare', 'server'," \
     " 'desktop' are currently supported, later this will be just a pass-through with" \
     " no verification to any configuration script I decide to build."

@@ -30,8 +30,7 @@ set_exports() {
 check_root() {
   local user_id
   user_id=$(id -u)
-  if [[ "${user_id}" != "0" ]]
-  then
+  if [[ "${user_id}" != "0" ]]; then
     local RED
     local RESET
     RED="$(tput setaf 1)"
@@ -46,11 +45,9 @@ download_deb_installer() {
 
   local script_url="https://raw.githubusercontent.com/brennanfee/linux-bootstraps/main/scripted-installer/debian/deb-install.bash"
 
-  if [[ ! -f "${script_file}" ]]
-  then
+  if [[ ! -f "${script_file}" ]]; then
     # To support testing of other versions of the install script (local versions, branches, etc.)
-    if [[ "${CONFIG_SCRIPT_SOURCE:=}" != "" ]]
-    then
+    if [[ "${CONFIG_SCRIPT_SOURCE:=}" != "" ]]; then
       wget -O "${script_file}" "${CONFIG_SCRIPT_SOURCE}"
     else
       wget -O "${script_file}" "${script_url}"
@@ -63,10 +60,10 @@ read_input_options() {
   export AUTO_ENCRYPT_DISKS=${AUTO_ENCRYPT_DISKS:=1}
   export AUTO_CONFIRM_SETTINGS=${AUTO_CONFIRM_SETTINGS:=1}
   export AUTO_REBOOT=${AUTO_REBOOT:=0}
-  export AUTO_USE_DATA_FOLDER=${AUTO_USE_DATA_FOLDER:=0}
+  export AUTO_USE_DATA_DIR=${AUTO_USE_DATA_DIR:=0}
+  export AUTO_CREATE_SERVICE_ACCT=${AUTO_CREATE_SERVICE_ACCT:=0}
 
-  while [[ "${1:-}" != "" ]]
-  do
+  while [[ "${1:-}" != "" ]]; do
     case $1 in
       -a | --auto | --automatic | --automode | --auto-mode)
         export AUTO_CONFIRM_SETTINGS=0
@@ -82,10 +79,16 @@ read_input_options() {
         export AUTO_IS_DEBUG=1
         ;;
       --data | --usedata | --use-data)
-        export AUTO_USE_DATA_FOLDER=1
+        export AUTO_USE_DATA_DIR=1
         ;;
       --nodata | --no-data | --nousedata | --no-use-data)
-        export AUTO_USE_DATA_FOLDER=0
+        export AUTO_USE_DATA_DIR=0
+        ;;
+      --service-acct | --create-service-acct | --svc-acct)
+        export AUTO_CREATE_SERVICE_ACCT=1
+        ;;
+      --no-service-acct | --no-create-service-acct | --no-svc-acct | --nosvc-acct)
+        export AUTO_CREATE_SERVICE_ACCT=0
         ;;
       -r | --reboot)
         export AUTO_REBOOT=1

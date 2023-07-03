@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # Bash strict mode
-([[ -n ${ZSH_EVAL_CONTEXT:-} && ${ZSH_EVAL_CONTEXT:-} =~ :file$ ]] ||
-  [[ -n ${BASH_VERSION:-} ]] && (return 0 2>/dev/null)) && SOURCED=true || SOURCED=false
+([[ -n ${ZSH_EVAL_CONTEXT:-} && ${ZSH_EVAL_CONTEXT:-} =~ :file$ ]] \
+  || [[ -n ${BASH_VERSION:-} ]] && (return 0 2> /dev/null)) && SOURCED=true || SOURCED=false
 if ! ${SOURCED}; then
   set -o errexit  # same as set -e
   set -o nounset  # same as set -u
@@ -60,7 +60,7 @@ function pull_arch() {
     wget -O "${shafile}" "https://mirror.rackspace.com/archlinux/iso/${version}/sha256sums.txt"
 
     [[ -f "${version_file}" ]] && rm "${version_file}"
-    echo "${version}" >>"${version_file}"
+    echo "${version}" >> "${version_file}"
 
     print_success "ISO updated"
   else
@@ -102,10 +102,10 @@ function pull_debian() {
     wget -O "${iso}" "https://cdimage.debian.org/debian-cd/${version}-live/amd64/iso-hybrid/debian-live-${version}-amd64-standard.iso"
 
     [[ -f "${shafile}" ]] && rm "${shafile}"
-    echo "${sha} debian-live-amd64-standard.iso" >>"${shafile}"
+    echo "${sha} debian-live-amd64-standard.iso" >> "${shafile}"
 
     [[ -f "${version_file}" ]] && rm "${version_file}"
-    echo "${version}" >>"${version_file}"
+    echo "${version}" >> "${version_file}"
 
     print_success "ISO updated"
   else
@@ -150,10 +150,10 @@ function pull_ubuntu() {
     wget -O "${iso}" "https://releases.ubuntu.com/${lts_codename}/ubuntu-${version}-live-server-amd64.iso"
 
     [[ -f "${shafile}" ]] && rm "${shafile}"
-    echo "${sha} ubuntu-live-server-amd64.iso" >>"${shafile}"
+    echo "${sha} ubuntu-live-server-amd64.iso" >> "${shafile}"
 
     [[ -f "${version_file}" ]] && rm "${version_file}"
-    echo "${version}" >>"${version_file}"
+    echo "${version}" >> "${version_file}"
 
     print_success "ISO updated"
   else

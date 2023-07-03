@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # Bash strict mode
-([[ -n ${ZSH_EVAL_CONTEXT:-} && ${ZSH_EVAL_CONTEXT:-} =~ :file$ ]] ||
-  [[ -n ${BASH_VERSION:-} ]] && (return 0 2>/dev/null)) && SOURCED=true || SOURCED=false
+([[ -n ${ZSH_EVAL_CONTEXT:-} && ${ZSH_EVAL_CONTEXT:-} =~ :file$ ]] \
+  || [[ -n ${BASH_VERSION:-} ]] && (return 0 2> /dev/null)) && SOURCED=true || SOURCED=false
 if ! ${SOURCED}; then
   set -o errexit  # same as set -e
   set -o nounset  # same as set -u
@@ -54,27 +54,27 @@ unset ARGS
 
 while true; do
   case "$1" in
-  '-h' | '--help')
-    HELP="true"
-    show_help
-    ;;
-  '-p' | '--preserve-image')
-    PRESERVE_IMAGE="true"
-    shift
-    continue
-    ;;
-  '-d' | '--debug')
-    DEBUG="true"
-    shift
-    continue
-    ;;
-  '--')
-    shift
-    break
-    ;;
-  *)
-    error_msg "Unknown option: $1"
-    ;;
+    '-h' | '--help')
+      HELP="true"
+      show_help
+      ;;
+    '-p' | '--preserve-image')
+      PRESERVE_IMAGE="true"
+      shift
+      continue
+      ;;
+    '-d' | '--debug')
+      DEBUG="true"
+      shift
+      continue
+      ;;
+    '--')
+      shift
+      break
+      ;;
+    *)
+      error_msg "Unknown option: $1"
+      ;;
   esac
 done
 

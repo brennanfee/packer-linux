@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # Bash strict mode
-([[ -n ${ZSH_EVAL_CONTEXT:-} && ${ZSH_EVAL_CONTEXT:-} =~ :file$ ]] ||
-  [[ -n ${BASH_VERSION:-} ]] && (return 0 2>/dev/null)) && SOURCED=true || SOURCED=false
+([[ -n ${ZSH_EVAL_CONTEXT:-} && ${ZSH_EVAL_CONTEXT:-} =~ :file$ ]] \
+  || [[ -n ${BASH_VERSION:-} ]] && (return 0 2> /dev/null)) && SOURCED=true || SOURCED=false
 if ! ${SOURCED}; then
   set -o errexit  # same as set -e
   set -o nounset  # same as set -u
@@ -42,8 +42,8 @@ main() {
       # If a UEFI install, fix the EFI boot
       if [[ -d "/boot/efi/" ]]; then
         if [[ ! -f "/boot/efi/startup.nsh" ]]; then
-          echo "FS0:" >/boot/efi/startup.nsh
-          echo "\EFI\debian\grubx64.efi" >>/boot/efi/startup.nsh
+          echo "FS0:" > /boot/efi/startup.nsh
+          echo "\EFI\debian\grubx64.efi" >> /boot/efi/startup.nsh
         fi
 
         DEBIAN_FRONTEND=noninteractive apt-get install -y -q --no-install-recommends efibootmgr

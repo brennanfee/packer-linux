@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # Bash strict mode
-([[ -n ${ZSH_EVAL_CONTEXT:-} && ${ZSH_EVAL_CONTEXT:-} =~ :file$ ]] ||
-  [[ -n ${BASH_VERSION:-} ]] && (return 0 2>/dev/null)) && SOURCED=true || SOURCED=false
+([[ -n ${ZSH_EVAL_CONTEXT:-} && ${ZSH_EVAL_CONTEXT:-} =~ :file$ ]] \
+  || [[ -n ${BASH_VERSION:-} ]] && (return 0 2> /dev/null)) && SOURCED=true || SOURCED=false
 if ! ${SOURCED}; then
   set -o errexit  # same as set -e
   set -o nounset  # same as set -u
@@ -88,48 +88,48 @@ unset ARGS
 
 while true; do
   case "$1" in
-  '-h' | '--help')
-    HELP="true"
-    show_help
-    ;;
-  '-p' | '--preserve-image')
-    PRESERVE_IMAGE="true"
-    shift
-    continue
-    ;;
-  '-d' | '--debug')
-    DEBUG="true"
-    shift
-    continue
-    ;;
-  '--')
-    shift
-    break
-    ;;
-  *)
-    error_msg "Unknown option: $1"
-    ;;
+    '-h' | '--help')
+      HELP="true"
+      show_help
+      ;;
+    '-p' | '--preserve-image')
+      PRESERVE_IMAGE="true"
+      shift
+      continue
+      ;;
+    '-d' | '--debug')
+      DEBUG="true"
+      shift
+      continue
+      ;;
+    '--')
+      shift
+      break
+      ;;
+    *)
+      error_msg "Unknown option: $1"
+      ;;
   esac
 done
 
 ARG_COUNT=1
 for arg; do
   case "${ARG_COUNT}" in
-  1)
-    VM_TYPES_STRING=$(echo "${arg}" | tr "[:upper:]" "[:lower:]")
-    ;;
-  2)
-    EDITIONS_STRING=$(echo "${arg}" | tr "[:upper:]" "[:lower:]")
-    ;;
-  3)
-    CONFIGS_STRING=$(echo "${arg}" | tr "[:upper:]" "[:lower:]")
-    ;;
-  4)
-    break
-    ;;
-  *)
-    error_msg "Internal Argument Error"
-    ;;
+    1)
+      VM_TYPES_STRING=$(echo "${arg}" | tr "[:upper:]" "[:lower:]")
+      ;;
+    2)
+      EDITIONS_STRING=$(echo "${arg}" | tr "[:upper:]" "[:lower:]")
+      ;;
+    3)
+      CONFIGS_STRING=$(echo "${arg}" | tr "[:upper:]" "[:lower:]")
+      ;;
+    4)
+      break
+      ;;
+    *)
+      error_msg "Internal Argument Error"
+      ;;
   esac
   ARG_COUNT=$((ARG_COUNT + 1))
 done
@@ -141,7 +141,7 @@ parse_vm_types() {
     VM_TYPES_STRING="all"
   fi
 
-  IFS=',' read -r -a TEMP_ARRAY <<<"${VM_TYPES_STRING}"
+  IFS=',' read -r -a TEMP_ARRAY <<< "${VM_TYPES_STRING}"
   for i in "${TEMP_ARRAY[@]}"; do
     if [[ "${i}" == "all" ]]; then
       VM_TYPES_TEMP=("${SUPPORTED_VM_TYPES[@]}")
@@ -159,15 +159,15 @@ parse_vm_types() {
   VM_TYPES_LIST=()
   for i in "${VM_TYPES_TEMP[@]}"; do
     case "${i}" in
-    'vbox' | 'virtualbox')
-      VM_TYPES_LIST+=('vbox')
-      ;;
-    'vagrant-vbox' | 'vagrant-virtualbox')
-      VM_TYPES_LIST+=('vagrantVbox')
-      ;;
-    *)
-      error_msg "Internal Argument Error: VM_TYPE"
-      ;;
+      'vbox' | 'virtualbox')
+        VM_TYPES_LIST+=('vbox')
+        ;;
+      'vagrant-vbox' | 'vagrant-virtualbox')
+        VM_TYPES_LIST+=('vagrantVbox')
+        ;;
+      *)
+        error_msg "Internal Argument Error: VM_TYPE"
+        ;;
     esac
   done
 
@@ -184,7 +184,7 @@ parse_editions() {
     EDITIONS_STRING="all"
   fi
 
-  IFS=',' read -r -a TEMP_ARRAY <<<"${EDITIONS_STRING}"
+  IFS=',' read -r -a TEMP_ARRAY <<< "${EDITIONS_STRING}"
   for i in "${TEMP_ARRAY[@]}"; do
     if [[ "${i}" == "all" ]]; then
       EDITIONS_TEMP=("${SUPPORTED_EDITIONS[@]}")
@@ -214,7 +214,7 @@ parse_configs() {
     CONFIGS_STRING="all"
   fi
 
-  IFS=',' read -r -a TEMP_ARRAY <<<"${CONFIGS_STRING}"
+  IFS=',' read -r -a TEMP_ARRAY <<< "${CONFIGS_STRING}"
   for i in "${TEMP_ARRAY[@]}"; do
     if [[ "${i}" == "*" || "${i}" == "all" ]]; then
       CONFIGS_TEMP=("${SUPPORTED_CONFIGS[@]}")

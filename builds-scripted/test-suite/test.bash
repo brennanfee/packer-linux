@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # Bash strict mode
-([[ -n ${ZSH_EVAL_CONTEXT:-} && ${ZSH_EVAL_CONTEXT:-} =~ :file$ ]] ||
-  [[ -n ${BASH_VERSION:-} ]] && (return 0 2>/dev/null)) && SOURCED=true || SOURCED=false
+([[ -n ${ZSH_EVAL_CONTEXT:-} && ${ZSH_EVAL_CONTEXT:-} =~ :file$ ]] \
+  || [[ -n ${BASH_VERSION:-} ]] && (return 0 2> /dev/null)) && SOURCED=true || SOURCED=false
 if ! ${SOURCED}; then
   set -o errexit  # same as set -e
   set -o nounset  # same as set -u
@@ -57,54 +57,54 @@ unset ARGS
 
 while true; do
   case "$1" in
-  '-h' | '--help')
-    HELP="true"
-    show_help
-    ;;
-  '-p' | '--preserve-image')
-    PRESERVE_IMAGE="true"
-    shift
-    continue
-    ;;
-  '-d' | '--debug')
-    DEBUG="true"
-    shift
-    continue
-    ;;
-  '-r' | '--report')
-    REPORT="true"
-    shift
-    continue
-    ;;
-  '--')
-    shift
-    break
-    ;;
-  *)
-    error_msg "Unknown option: $1"
-    ;;
+    '-h' | '--help')
+      HELP="true"
+      show_help
+      ;;
+    '-p' | '--preserve-image')
+      PRESERVE_IMAGE="true"
+      shift
+      continue
+      ;;
+    '-d' | '--debug')
+      DEBUG="true"
+      shift
+      continue
+      ;;
+    '-r' | '--report')
+      REPORT="true"
+      shift
+      continue
+      ;;
+    '--')
+      shift
+      break
+      ;;
+    *)
+      error_msg "Unknown option: $1"
+      ;;
   esac
 done
 
 ARG_COUNT=1
 for arg; do
   case "${ARG_COUNT}" in
-  1)
-    TEST_CASE=$(echo "${arg}" | tr "[:upper:]" "[:lower:]")
-    ;;
-  2)
-    break
-    ;;
-  *)
-    error_msg "Internal Argument Error"
-    ;;
+    1)
+      TEST_CASE=$(echo "${arg}" | tr "[:upper:]" "[:lower:]")
+      ;;
+    2)
+      break
+      ;;
+    *)
+      error_msg "Internal Argument Error"
+      ;;
   esac
   ARG_COUNT=$((ARG_COUNT + 1))
 done
 
 write_report() {
   if [[ "${REPORT}" == "true" ]]; then
-    echo "${1}" >>"${SCRIPT_DIR}/test-report.txt"
+    echo "${1}" >> "${SCRIPT_DIR}/test-report.txt"
   fi
 }
 
@@ -211,7 +211,7 @@ main() {
   fi
 
   if [[ "${REPORT}" == "true" ]]; then
-    awk -v tc="  ${TEST_CASE}: " '{print tc $0}' "${SCRIPT_DIR}/test-results.txt" >>"${SCRIPT_DIR}/test-report.txt"
+    awk -v tc="  ${TEST_CASE}: " '{print tc $0}' "${SCRIPT_DIR}/test-results.txt" >> "${SCRIPT_DIR}/test-report.txt"
   fi
 
   total_tests=$(grep -c -P '^PASS:|^FAIL:' "${SCRIPT_DIR}/test-results.txt" || true)

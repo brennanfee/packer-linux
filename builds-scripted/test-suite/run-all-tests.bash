@@ -30,7 +30,7 @@ HELP="false"
 show_help() {
   if [[ "${HELP}" == "false" ]]; then
     print_warning "Incorrect parameters or options provided."
-    blank_line
+    print_blank_line
   fi
 
   #TODO: Add help

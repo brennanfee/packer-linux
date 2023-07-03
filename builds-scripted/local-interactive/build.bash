@@ -32,24 +32,24 @@ HELP="false"
 show_help() {
   if [[ "${HELP}" == "false" ]]; then
     print_warning "Incorrect parameters or options provided."
-    blank_line
+    print_blank_line
   fi
 
   print_status "build Help"
-  blank_line
+  print_blank_line
   print_status "There are two parameters available: "
-  blank_line
+  print_blank_line
   print_status "  build <os> <disk configuration>"
-  blank_line
+  print_blank_line
   print_status "Basic usage:"
-  blank_line
+  print_blank_line
   print_status "Values can be omitted from the right toward the left of the options. An omitted option accepts the default for that option.  The options are ordered in order of importance and most common usage."
-  blank_line
+  print_blank_line
   print_status "  OS: Can be 'debian', 'ubuntu', or 'arch' for the Debian, Ubuntu, or Arch scripts. The default value is 'debian'.  At present the debian and ubuntu scripts are the same script."
   print_status "  Disk Configuration: Can be either 'single', 'dual', 'triple', or 'multi'.  'multi' is a synonym for 'dual'. The default value is 'single'."
-  blank_line
+  print_blank_line
   print_status "A -d or --debug option can be included which will turn on debug mode."
-  blank_line
+  print_blank_line
 
   if [[ "${HELP}" == "false" ]]; then
     exit 1

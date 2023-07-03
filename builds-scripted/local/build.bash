@@ -33,26 +33,26 @@ HELP="false"
 show_help() {
   if [[ "${HELP}" == "false" ]]; then
     print_warning "Incorrect parameters or options provided."
-    blank_line
+    print_blank_line
   fi
 
   print_status "build Help"
-  blank_line
+  print_blank_line
   print_status "There are two parameters available: "
-  blank_line
+  print_blank_line
   print_status "  build [options] <os edition> <configuration>"
-  blank_line
+  print_blank_line
   print_status "Basic usage:"
-  blank_line
+  print_blank_line
   print_status "Values can be omitted from the right toward the left of the options. An omitted option accepts the default for that option.  The options are ordered in order of importance and most common usage."
-  blank_line
+  print_blank_line
   print_status "  OS Edition: Can be 'stable', 'backports', or 'testing' for Debian or 'lts', 'ltsedge' and 'rolling' for Ubuntu.  Each refers to the branch of OS you want to install.  The default value is 'stable' ('lts' for Ubuntu')."
   print_status "  Configuration: This is the machine configuration.  In this local test location only 'bare' and 'bios' are supported.  The default is 'bare'."
-  blank_line
+  print_blank_line
   print_status "A -e or --encrypted option can be included which will produce disks that are encrypted.  The default is to not encrypt the drives, which for virtual machines is usually preferred."
-  blank_line
+  print_blank_line
   print_status "A -d or --debug option can be included which will turn on debug mode."
-  blank_line
+  print_blank_line
 
   if [[ "${HELP}" == "false" ]]; then
     exit 1

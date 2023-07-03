@@ -6,8 +6,8 @@
 # way.  The config script sets some values for a specific type of installation
 # and then automatically calls the deb-install script.
 #
-# Short URL: https://tinyurl.com/deb-vm-backports
-# Github URL: https://raw.githubusercontent.com/brennanfee/linux-bootstraps-my-configs/main/scripted-installer/debian/vm-backports.bash
+# Short URL:
+# Github URL:
 #
 #
 ##################  MODIFY THIS SECTION

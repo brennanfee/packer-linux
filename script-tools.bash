@@ -5,8 +5,8 @@
 # we do NOT want to export them but instead use them "within" the shell instance only.
 
 # Bash strict mode
-([[ -n ${ZSH_EVAL_CONTEXT:-} && ${ZSH_EVAL_CONTEXT:-} =~ :file$ ]] ||
-  [[ -n ${BASH_VERSION:-} ]] && (return 0 2>/dev/null)) && SOURCED=true || SOURCED=false
+([[ -n ${ZSH_EVAL_CONTEXT:-} && ${ZSH_EVAL_CONTEXT:-} =~ :file$ ]] \
+  || [[ -n ${BASH_VERSION:-} ]] && (return 0 2> /dev/null)) && SOURCED=true || SOURCED=false
 if ! ${SOURCED}; then
   set -o errexit  # same as set -e
   set -o nounset  # same as set -u
@@ -25,7 +25,7 @@ fi
 
 # function to make checking executable existence easier
 function command_exists() {
-  command -v "$1" &>/dev/null && return 0 || return 1
+  command -v "$1" &> /dev/null && return 0 || return 1
 }
 
 # function to make sourcing an optional item easier
@@ -96,17 +96,36 @@ function contains_element() {
 # list of all available packages.  The first version, 'apt_package_exists'
 # checks the current machine, while the other uses arch-chroot to check.
 #
-# This should be used with the get_exit_code function above.  Like so:
+# This should be used like so:
 #
-# get_exit_code apt_package_exists "some-package"
-# if [[ ${EXIT_CODE} -eq 0 ]]
+# if apt_package_exists "my-package"; then
 # then
 #   <package exists, code goes here>
 # fi
 #
 function apt_package_exists() {
-  apt-cache show "$1" &>/dev/null
-  return $?
+  local apt
+  apt=$(apt-cache -q=2 show "$1" 2>&1 | head -n 1 || true)
+  if [[ "${apt}" == Package* ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+# Works just like apt_package_exists but does a chroot first.  This is
+# mostly usable in installation scenarios.  By default it chroot's to /mnt
+# but you can pass a second argument to override that.  The first argument is
+# the package to check for.
+#
+function arch_chroot_apt_package_exists() {
+  local apt
+  apt=$(arch-chroot /mnt apt-cache -q=2 show "$1" 2>&1 | head -n 1 || true)
+  if [[ "${apt}" == Package* ]]; then
+    return 0
+  else
+    return 1
+  fi
 }
 
 # Whether a package is actually installed
@@ -120,16 +139,7 @@ function apt_package_installed() {
   fi
 }
 
-# Works just like apt_package_exists but does a chroot first.  This is
-# mostly usable in installation scenarios.  By default it chroot's to /mnt
-# but you can pass a second argument to override that.  The first argument is
-# the package to check for.
-#
-function arch_chroot_apt_package_exists() {
-  arch-chroot "${2:-/mnt}" apt-cache show "$1" &>/dev/null
-  return $?
-}
-
+# chroot version of the above function
 function arch_chroot_apt_package_installed() {
   local pkg_count
   pkg_count=$(arch-chroot "${2:-/mnt}" dpkg --get-selections | grep -c "${1}")
@@ -201,7 +211,7 @@ function is_virtual() {
 }
 
 function is_vagrant() {
-  if is_vm && [[ "$(grep -i '^vagrant' </etc/passwd || true)" == "" ]]; then
+  if is_vm && [[ "$(grep -i '^vagrant' < /etc/passwd || true)" == "" ]]; then
     return 1
   else
     return 0
@@ -356,8 +366,12 @@ text_clear="$(tput sgr0)"
 
 #### START: Terminal Print Functions
 
-function blank_line() {
+function print_blank_line() {
   echo ""
+}
+
+function print_separator() {
+  print_line "$@"
 }
 
 function print_line() {
@@ -366,11 +380,19 @@ function print_line() {
   printf "%${T_COLS}s\n" | tr ' ' '-'
 }
 
+function print_white() {
+  print_status "$@"
+}
+
 function print_status() {
   local T_COLS
   T_COLS=$(tput cols)
   T_COLS=$((T_COLS - 1))
-  echo -e "$1${text_reset}" | fold -sw "${T_COLS}"
+  echo -e "${text_reset}$1${text_reset}" | fold -sw "${T_COLS}"
+}
+
+function print_bold() {
+  print_info "$@"
 }
 
 function print_info() {
@@ -380,11 +402,19 @@ function print_info() {
   echo -e "${text_bold}$1${text_reset}" | fold -sw "${T_COLS}"
 }
 
+function print_yellow() {
+  print_warning "$@"
+}
+
 function print_warning() {
   local T_COLS
   T_COLS=$(tput cols)
   T_COLS=$((T_COLS - 1))
   echo -e "${text_yellow}$1${text_reset}" | fold -sw "${T_COLS}"
+}
+
+function print_green() {
+  print_success "$@"
 }
 
 function print_success() {
@@ -394,11 +424,40 @@ function print_success() {
   echo -e "${text_green}$1${text_reset}" | fold -sw "${T_COLS}"
 }
 
+function print_red() {
+  print_error "$@"
+}
+
 function print_error() {
   local T_COLS
   T_COLS=$(tput cols)
   T_COLS=$((T_COLS - 1))
   echo -e "${text_red}$1${text_reset}" | fold -sw "${T_COLS}"
+}
+
+function print_blue() {
+  local T_COLS
+  T_COLS=$(tput cols)
+  T_COLS=$((T_COLS - 1))
+  echo -e "${text_blue}$1${text_reset}" | fold -sw "${T_COLS}"
+}
+
+function print_magenta {
+  print_heading "$@"
+}
+
+function print_heading {
+  local T_COLS
+  T_COLS=$(tput cols)
+  T_COLS=$((T_COLS - 1))
+  echo -e "${text_magenta}$1${text_reset}" | fold -sw "${T_COLS}"
+}
+
+function print_cyan {
+  local T_COLS
+  T_COLS=$(tput cols)
+  T_COLS=$((T_COLS - 1))
+  echo -e "${text_cyan}$1${text_reset}" | fold -sw "${T_COLS}"
 }
 
 function pause_output() {

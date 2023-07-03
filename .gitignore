@@ -202,4 +202,4 @@ builds-scripted/local-interactive/interactive-install.log
 builds-scripted/local-interactive/my-config.bash
 builds-scripted/test-suite/test-results.txt
 builds-scripted/test-suite/test-report.txt
-ISOs\**\*.iso
+ISOs/**/*.iso

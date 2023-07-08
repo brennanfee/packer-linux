@@ -75,12 +75,15 @@ main() {
     echo 'Setting up svcacct users SSH'
 
     mkdir -p /home/svcacct/.ssh
+    chown svcacct:users /home/svcacct/.ssh
+    chmod "0700" /home/svcacct/.ssh
+
     cat << EOF > /home/svcacct/.ssh/authorized_keys
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAH5mZH2G4fD3f5ofopNdg1NfA4wE4ASwD4drU+w8RYR ansible@bfee.org
 EOF
 
-    chown -R svcacct /home/svcacct/.ssh
-    chmod -R go-rwsx /home/svcacct/.ssh
+    chown svcacct:users /home/svcacct/.ssh/authorized_keys
+    chmod "0644" /home/svcacct/.ssh/authorized_keys
   fi
 
   # Add vagrant user to passwordless sudo

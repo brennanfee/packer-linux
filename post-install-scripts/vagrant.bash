@@ -72,9 +72,13 @@ main() {
     echo 'Setting up vagrant users SSH'
 
     mkdir -p /home/vagrant/.ssh
+    chown vagrant:vagrant /home/vagrant/.ssh
+    chmod "0700" /home/vagrant/.ssh
+
     wget -nv --no-check-certificate -O /home/vagrant/.ssh/authorized_keys 'https://raw.githubusercontent.com/hashicorp/vagrant/master/keys/vagrant.pub'
-    chown -R vagrant /home/vagrant/.ssh
-    chmod -R go-rwsx /home/vagrant/.ssh
+
+    chown vagrant:vagrant /home/vagrant/.ssh/authorized_keys
+    chmod "0644" /home/vagrant/.ssh/authorized_keys
   fi
 
   # Add vagrant user to passwordless sudo

@@ -75,7 +75,7 @@ main() {
     echo 'Setting up svcacct users SSH'
 
     mkdir -p /home/svcacct/.ssh
-    cat << EOF > /etc/svcacct/.ssh/authorized_keys
+    cat << EOF > /home/svcacct/.ssh/authorized_keys
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAH5mZH2G4fD3f5ofopNdg1NfA4wE4ASwD4drU+w8RYR ansible@bfee.org
 EOF
 

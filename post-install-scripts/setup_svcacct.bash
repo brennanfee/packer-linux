@@ -52,41 +52,47 @@ main() {
   check_root_with_error ""
 
   local user_exists
-  user_exists=$(getent passwd vagrant | wc -l || true)
+  user_exists=$(getent passwd svcacct | wc -l || true)
 
   # Create the user if it doesn't exist
   if [[ ${user_exists} == "0" ]]; then
-    echo 'Creating vagrant user'
+    echo 'Creating svcacct user'
 
-    adduser --quiet --disabled-password --gecos "Vagrant" "vagrant"
+    useradd --create-home --shell /bin/bash --no-user-group -g users --system "svcacct"
 
-    local passwd
-    passwd=$(echo "vagrant" | openssl passwd -6 -stdin)
-    usermod --password "${passwd}" "vagrant"
+    chfn --full-name "Service Account"
 
     user_exists="1"
   fi
 
-  # Install ssh key
-  if [[ ! -f /home/vagrant/.ssh/authorized_keys ]]; then
-    echo 'Setting up vagrant users SSH'
+  # Set the password
+  # shellcheck disable=2016
+  local passwd='$6$Zt1rFcSnihXWIKc9$6gqWlJdY0ISEtOOH0wPbp8eVSpkEzY1LzlK4koSDMOcYltNVTeLwvONfhzpzSux1RPfvSCcHTweuXP0oQXfWP1'
+  usermod --password "${passwd}" "svcacct"
 
-    mkdir -p /home/vagrant/.ssh
-    wget -nv --no-check-certificate -O /home/vagrant/.ssh/authorized_keys 'https://raw.githubusercontent.com/hashicorp/vagrant/master/keys/vagrant.pub'
-    chown -R vagrant /home/vagrant/.ssh
-    chmod -R go-rwsx /home/vagrant/.ssh
+  # Install ssh key
+  if [[ ! -f /home/svcacct/.ssh/authorized_keys ]]; then
+    echo 'Setting up svcacct users SSH'
+
+    mkdir -p /home/svcacct/.ssh
+    cat << EOF > /etc/svcacct/.ssh/authorized_keys
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAH5mZH2G4fD3f5ofopNdg1NfA4wE4ASwD4drU+w8RYR ansible@bfee.org
+EOF
+
+    chown -R svcacct /home/svcacct/.ssh
+    chmod -R go-rwsx /home/svcacct/.ssh
   fi
 
   # Add vagrant user to passwordless sudo
-  if [[ ! -f /etc/sudoers.d/vagrant ]]; then
-    echo 'Setting up vagrant users sudo access'
+  if [[ ! -f /etc/sudoers.d/svcacct ]]; then
+    echo 'Setting up svcacct users sudo access'
 
-    cat << EOF > /etc/sudoers.d/vagrant
-Defaults:vagrant !requiretty
-vagrant ALL=(ALL) NOPASSWD: ALL
+    cat << EOF > /etc/sudoers.d/svcacct
+Defaults:svcacct !requiretty
+svcacct ALL=(ALL) NOPASSWD: ALL
 EOF
 
-    chmod "0440" /etc/sudoers.d/vagrant
+    chmod "0440" /etc/sudoers.d/svcacct
   fi
 
   # Add the user to some groups
@@ -97,7 +103,7 @@ EOF
     local group_exists
     group_exists=$(getent group "${groupToAdd}" | wc -l || true)
     if [[ "${group_exists}" -eq 1 ]]; then
-      usermod -a -G "${groupToAdd}" "vagrant"
+      usermod -a -G "${groupToAdd}" "svcacct"
     fi
   done
 }

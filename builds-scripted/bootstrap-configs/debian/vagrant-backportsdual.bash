@@ -24,6 +24,9 @@ set_exports() {
   export AUTO_USERNAME=${AUTO_USERNAME:=vagrant}
   export AUTO_USER_PWD=${AUTO_USER_PWD:=vagrant}
 
+  export AUTO_CREATE_SERVICE_ACCT=${AUTO_CREATE_SERVICE_ACCT:=1}
+  export AUTO_SERVICE_ACCT_SSH_KEY=${AUTO_SERVICE_ACCT_SSH_KEY:=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAH5mZH2G4fD3f5ofopNdg1NfA4wE4ASwD4drU+w8RYR ansible@bfee.org}
+
   # Forced settings
   export AUTO_ENCRYPT_DISKS=0
   export AUTO_USE_DATA_DIR=1

@@ -10,7 +10,7 @@ variable "edition" {
 
 variable "username" {
   type    = string
-  default = "root"
+  default = "svcacct"
 }
 
 variable "password" {

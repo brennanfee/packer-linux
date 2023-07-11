@@ -65,30 +65,30 @@ main() {
 
     # NOTE: Why the ISO?  In Debian the guest addition packages are no longer available and while Ubuntu offers them, this provides consistency.  If this script is being used in a packer environment, then the guest additions uploaded by it will be used.  If not, the ISO will be downloaded automatically.
 
-    # Can't use $USER as we are running this script as root/sudo
-    local current_user
-    current_user=$(logname)
-
     # Determine if we need to download the ISO and do so if needed
-    if [[ ! -f "/home/${current_user}/VBoxGuestAdditions.iso" ]]; then
+    if [[ ! -f "${HOME}/VBoxGuestAdditions.iso" ]]; then
       # Figure out which version to download
-      /usr/bin/wget --output-document "/home/${current_user}/LATEST-STABLE.TXT" https://download.virtualbox.org/virtualbox/LATEST-STABLE.TXT
+      /usr/bin/wget --output-document "${HOME}/LATEST-STABLE.TXT" https://download.virtualbox.org/virtualbox/LATEST-STABLE.TXT
       local vb_version
-      vb_version=$(cat "/home/${current_user}/LATEST-STABLE.TXT")
-      rm "/home/${current_user}/LATEST-STABLE.TXT"
+      vb_version=$(cat "${HOME}/LATEST-STABLE.TXT")
+      rm "${HOME}/LATEST-STABLE.TXT"
 
       # Download it
       local vb_url="https://download.virtualbox.org/virtualbox/${vb_version}/VBoxGuestAdditions_${vb_version}.iso"
-      /usr/bin/wget --output-document "/home/${current_user}/VBoxGuestAdditions.iso" "${vb_url}"
+      /usr/bin/wget --output-document "${HOME}/VBoxGuestAdditions.iso" "${vb_url}"
     fi
 
     # Mount the ISO and run the install
     mkdir /media/vb-additions
-    mount -t iso9660 -o loop,ro /home/"${current_user}"/VBoxGuestAdditions.iso /media/vb-additions
+    mount -t iso9660 -o loop,ro "${HOME}/VBoxGuestAdditions.iso" /media/vb-additions
     /media/vb-additions/VBoxLinuxAdditions.run --nox11 || true
     umount /media/vb-additions
     rmdir /media/vb-additions
-    rm /home/"${current_user}"/VBoxGuestAdditions.iso
+    rm "${HOME}/VBoxGuestAdditions.iso"
+
+    # Can't use $USER as we are running this script as root/sudo
+    local current_user
+    current_user=$(logname)
 
     # Add user to the vboxsf group
     local group_exists

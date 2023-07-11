@@ -1,6 +1,9 @@
 ---
+# vim: set ft=yaml.ansible:
+
 - name: Ping
-  hosts: all
+  hosts: '{{targets|default("all")}}'
   gather_facts: false
   tasks:
-    - ping:
+    - name: Ping
+      ansible.builtin.ping: null

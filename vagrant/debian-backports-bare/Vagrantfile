@@ -28,16 +28,27 @@ Vagrant.configure('2') do |config|
   end
   if ARGV.include? '--provision-with'
     config.vm.provision 'ping', type: 'ansible', run: 'always' do |ansible|
-      ansible.playbook = '../../ansible/ping.yml'
+      ansible.playbook = '../../../ansible-linux-home/playbooks/ping.yml'
       ansible.compatibility_mode = '2.0'
     end
     config.vm.provision 'facts', type: 'ansible', run: 'always' do |ansible|
-      ansible.playbook = '../../ansible/facts.yml'
+      ansible.playbook = '../../../ansible-linux-home/playbooks/facts.yml'
       ansible.compatibility_mode = '2.0'
       ansible.host_vars = {
         'default' => {
           'test_key' => 'some value'
         }
+      }
+    end
+    config.vm.provision 'test', type: 'ansible', run: 'always' do |ansible|
+      ansible.playbook = '../../../ansible-linux-home/playbooks/test.yml'
+      ansible.compatibility_mode = '2.0'
+    end
+    config.vm.provision 'server', type: 'ansible', run: 'always' do |ansible|
+      ansible.playbook = '../../../ansible-linux-home/main.yml'
+      ansible.compatibility_mode = '2.0'
+      ansible.groups = {
+        'servers' => ['packer-debian-backports-bare']
       }
     end
   end

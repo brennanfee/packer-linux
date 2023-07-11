@@ -25,11 +25,10 @@ variable "is_debug" {
 
 variable "username" {
   type    = string
-  default = "debian"
+  default = "root"
 }
 
 variable "password" {
   type    = string
   default = "debian"
 }
-

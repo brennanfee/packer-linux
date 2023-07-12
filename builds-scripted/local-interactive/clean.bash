@@ -54,6 +54,9 @@ main() {
 
   # Exported config
   rm -f "${SCRIPT_DIR}/my-config.bash"
+
+  echo ""
+  print_success "Clean Complete"
 }
 
-main
+main "$@"

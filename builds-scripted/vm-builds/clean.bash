@@ -65,4 +65,4 @@ main() {
   print_success "Clean Complete"
 }
 
-main
+main "$@"

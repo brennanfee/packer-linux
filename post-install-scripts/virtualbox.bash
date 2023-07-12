@@ -17,15 +17,36 @@ if ! ${SOURCED}; then
 fi
 # END Bash scrict mode
 
-# Must be root
-cur_user=$(id -u)
-if [[ ${cur_user} -ne 0 ]]; then
-  echo "This script must be run as root."
-  exit 1
-fi
-unset cur_user
+function check_root_with_error() {
+  local user_id
+  user_id=$(id -u)
+
+  if [[ ${user_id} -ne 0 ]]; then
+    local error_message=${1:=""}
+    if [[ "${error_message}" == "" ]]; then
+      error_message="ERROR!  You must execute this script as the 'root' user."
+    fi
+    local error_code=${2:="1"}
+
+    local T_COLS
+    T_COLS=$(tput cols)
+    T_COLS=$((T_COLS - 1))
+
+    # Only here for portability, this method can be copy/pasted from here to anywhere else
+    local RED
+    local RESET
+    RED="$(tput setaf 1)"
+    RESET="$(tput sgr0)"
+
+    # shellcheck disable=2154
+    echo -e "${RED}${error_message}${RESET}\n" | fold -sw "${T_COLS}"
+    exit "${error_code}"
+  fi
+}
 
 main() {
+  check_root_with_error
+
   local in_virtualbox
   in_virtualbox=$(lspci | grep -c VirtualBox)
 
@@ -58,8 +79,9 @@ main() {
       fi
     fi
 
-    ### Install libxt6 which is a prerequisite
-    DEBIAN_FRONTEND=noninteractive apt-get install -y -q --no-install-recommends libxt6 libxmu6
+    ### Install build prerequisites
+    DEBIAN_FRONTEND=noninteractive apt-get install -y -q \
+      --no-install-recommends build_essential dkms libxt6 libxmu6
 
     ### Install the guest additions using the ISO
 
@@ -108,4 +130,4 @@ main() {
   fi
 }
 
-main
+main "$@"

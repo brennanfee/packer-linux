@@ -81,7 +81,7 @@ main() {
 
     ### Install build prerequisites
     DEBIAN_FRONTEND=noninteractive apt-get install -y -q \
-      --no-install-recommends build_essential dkms libxt6 libxmu6
+      --no-install-recommends build-essential dkms libxt6 libxmu6
 
     ### Install the guest additions using the ISO
 

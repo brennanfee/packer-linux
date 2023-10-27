@@ -52,19 +52,24 @@ show_help() {
   print_blank_line
   print_status "Basic usage:"
   print_blank_line
-  print_status "Values can be omitted from the right toward the left of the options." \
-    " Multiple values can be passed by comma-separating the values, so 'vbox,vagrant-vbox'" \
-    " both Virtualbox and the Vagrant Virtualbox flavor VMs.  Alternatively you can pass" \
-    " 'all' to indicate all of that type.  An omitted option accepts the default for that" \
-    " option, which is 'all'."
+  local l="Values can be omitted from the right toward the left of the options. "
+  l+="Multiple values can be passed by comma-separating the values, so 'vbox,vagrant-vbox' "
+  l+="both Virtualbox and the Vagrant Virtualbox flavor VMs.  Alternatively you can pass "
+  l+="'all' to indicate all of that type.  An omitted option accepts the default for that "
+  l+="option, which is 'all'."
+  print_status "$l"
   print_blank_line
   print_status "  VM Type: Can be 'vbox', 'virtualbox', 'vagrant-vbox', or 'vagrant-virtualbox'"
-  print_status "  OS Edition: Can be either 'stable', 'backports', 'testing', 'lts', 'ltsedge'," \
-    " or 'rolling' and refers to the branch of Debian (for stable, backports, or testing) or" \
-    " Ubuntu (for lts, ltsedge, or rolling) to be installed."
-  print_status "  Configuration: This is the machine configuration.  'bare', 'server'," \
-    " 'desktop' are currently supported, later this will be just a pass-through with" \
-    " no verification to any configuration script I decide to build."
+  print_blank_line
+  l="  OS Edition: Can be either 'stable', 'backports', 'testing', 'lts', 'ltsedge', "
+  l+="or 'rolling' and refers to the branch of Debian (for stable, backports, or testing) or "
+  l+="Ubuntu (for lts, ltsedge, or rolling) to be installed."
+  print_status "$l"
+  print_blank_line
+  l="  Configuration: This is the machine configuration.  'bare', 'server', "
+  l+="'desktop' are currently supported, later this will be just a pass-through with "
+  l+="no verification to any configuration script I decide to build."
+  print_status "$l"
   print_blank_line
 
   if [[ "${HELP}" == "false" ]]; then

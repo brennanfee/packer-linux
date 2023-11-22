@@ -111,7 +111,7 @@ main() {
 
     local install_date
     install_date=$(date -Is)
-    echo "${install_date}" >> "${dest}/guest-install-noX11.txt"
+    echo "${install_date}" >> "${dest}/guest-install-no_x11.txt"
 
     # Can't use $USER as we are running this script as root/sudo
     local current_user

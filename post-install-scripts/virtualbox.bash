@@ -85,28 +85,33 @@ main() {
 
     ### Install the guest additions using the ISO
 
-    # NOTE: Why the ISO?  In Debian the guest addition packages are no longer available and while Ubuntu offers them, this provides consistency.  If this script is being used in a packer environment, then the guest additions uploaded by it will be used.  If not, the ISO will be downloaded automatically.
+    # NOTE: Why the ISO?  In Debian the guest addition packages are no longer available and while Ubuntu offers them, this provides consistency.
+
+    local dest="/usr/local/src/virtualbox-guest"
+    mkdir -p "${dest}"
 
     # Determine if we need to download the ISO and do so if needed
-    if [[ ! -f "${HOME}/VBoxGuestAdditions.iso" ]]; then
+    if [[ ! -f "${dest}/VBoxGuestAdditions.iso" ]]; then
       # Figure out which version to download
-      /usr/bin/wget --output-document "${HOME}/LATEST-STABLE.TXT" https://download.virtualbox.org/virtualbox/LATEST-STABLE.TXT
+      /usr/bin/wget --output-document "${dest}/LATEST-STABLE.TXT" https://download.virtualbox.org/virtualbox/LATEST-STABLE.TXT
       local vb_version
-      vb_version=$(cat "${HOME}/LATEST-STABLE.TXT")
-      rm "${HOME}/LATEST-STABLE.TXT"
+      vb_version=$(cat "${dest}/LATEST-STABLE.TXT")
+      mv "${dest}/LATEST-STABLE.TXT" "${dest}/version.txt"
 
       # Download it
       local vb_url="https://download.virtualbox.org/virtualbox/${vb_version}/VBoxGuestAdditions_${vb_version}.iso"
-      /usr/bin/wget --output-document "${HOME}/VBoxGuestAdditions.iso" "${vb_url}"
+      /usr/bin/wget --output-document "${dest}/VBoxGuestAdditions.iso" "${vb_url}"
     fi
 
     # Mount the ISO and run the install
-    mkdir /media/vb-additions
-    mount -t iso9660 -o loop,ro "${HOME}/VBoxGuestAdditions.iso" /media/vb-additions
-    /media/vb-additions/VBoxLinuxAdditions.run --nox11 || true
-    umount /media/vb-additions
-    rmdir /media/vb-additions
-    rm "${HOME}/VBoxGuestAdditions.iso"
+    mkdir -p /media/iso
+    mount -t iso9660 -o loop,ro "${dest}/VBoxGuestAdditions.iso" /media/iso
+    /media/iso/VBoxLinuxAdditions.run --nox11 || true
+    umount /media/iso
+
+    local install_date
+    install_date=$(date -Is)
+    echo "${install_date}" >> "${dest}/guest-install-noX11.txt"
 
     # Can't use $USER as we are running this script as root/sudo
     local current_user

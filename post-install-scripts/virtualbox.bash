@@ -92,15 +92,21 @@ main() {
 
     # Determine if we need to download the ISO and do so if needed
     if [[ ! -f "${dest}/VBoxGuestAdditions.iso" ]]; then
-      # Figure out which version to download
-      /usr/bin/wget --output-document "${dest}/LATEST-STABLE.TXT" https://download.virtualbox.org/virtualbox/LATEST-STABLE.TXT
-      local vb_version
-      vb_version=$(cat "${dest}/LATEST-STABLE.TXT")
-      mv "${dest}/LATEST-STABLE.TXT" "${dest}/version.txt"
+      # First see if we have the iso loaded in the home dir...
+      if [[ -f "${HOME}/VBoxGuestAdditions.iso" ]]; then
+        mv "${HOME}/VBoxGuestAdditions.iso" "${dest}/VBoxGuestAdditions.iso"
+        echo "From HOME Folder" >> "${dest}/version.txt"
+      else
+        # Figure out which version to download
+        /usr/bin/wget --output-document "${dest}/LATEST-STABLE.TXT" https://download.virtualbox.org/virtualbox/LATEST-STABLE.TXT
+        local vb_version
+        vb_version=$(cat "${dest}/LATEST-STABLE.TXT")
+        mv "${dest}/LATEST-STABLE.TXT" "${dest}/version.txt"
 
-      # Download it
-      local vb_url="https://download.virtualbox.org/virtualbox/${vb_version}/VBoxGuestAdditions_${vb_version}.iso"
-      /usr/bin/wget --output-document "${dest}/VBoxGuestAdditions.iso" "${vb_url}"
+        # Download it
+        local vb_url="https://download.virtualbox.org/virtualbox/${vb_version}/VBoxGuestAdditions_${vb_version}.iso"
+        /usr/bin/wget --output-document "${dest}/VBoxGuestAdditions.iso" "${vb_url}"
+      fi
     fi
 
     # Mount the ISO and run the install

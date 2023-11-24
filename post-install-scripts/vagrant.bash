@@ -95,7 +95,7 @@ EOF
 
   # Add the user to some groups
   # _ssh is the new name for the ssh group going forward, but I attempt to add both (ssh, _ssh) just in case
-  local groupsToAdd=(audio video plugdev netdev sudo ssh _ssh users data-user vboxsf)
+  local groupsToAdd=(audio video plugdev netdev bluetooth kvm sudo ssh _ssh users data-user vboxsf)
 
   for groupToAdd in "${groupsToAdd[@]}"; do
     local group_exists

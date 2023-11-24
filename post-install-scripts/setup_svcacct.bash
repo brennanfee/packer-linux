@@ -79,7 +79,7 @@ main() {
     chmod "0700" /home/svcacct/.ssh
 
     cat << EOF > /home/svcacct/.ssh/authorized_keys
-ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAH5mZH2G4fD3f5ofopNdg1NfA4wE4ASwD4drU+w8RYR ansible@bfee.org
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAH5mZH2G4fD3f5ofopNdg1NfA4wE4ASwD4drU+w8RYR ansible@fee.casa
 EOF
 
     chown svcacct:users /home/svcacct/.ssh/authorized_keys
@@ -100,7 +100,7 @@ EOF
 
   # Add the user to some groups
   # _ssh is the new name for the ssh group going forward, but I attempt to add both (ssh, _ssh) just in case
-  local groupsToAdd=(audio video plugdev netdev sudo ssh _ssh users data-user vboxsf)
+  local groupsToAdd=(audio video plugdev netdev bluetooth kvm sudo ssh _ssh users data-user vboxsf)
 
   for groupToAdd in "${groupsToAdd[@]}"; do
     local group_exists

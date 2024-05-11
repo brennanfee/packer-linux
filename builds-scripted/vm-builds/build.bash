@@ -61,9 +61,11 @@ show_help() {
   print_blank_line
   print_status "  VM Type: Can be 'vbox', 'virtualbox', 'vagrant-vbox', or 'vagrant-virtualbox'"
   print_blank_line
-  l="  OS Edition: Can be either 'stable', 'backports', 'testing', 'lts', 'ltsedge', "
-  l+="or 'rolling' and refers to the branch of Debian (for stable, backports, or testing) or "
-  l+="Ubuntu (for lts, ltsedge, or rolling) to be installed."
+  l="  OS Edition: Can be either 'stable', 'backports', 'backportsdual', 'testing', "
+  l+="'lts', 'ltsedge', or 'rolling' and refers to the branch of Debian (for stable, "
+  l+="backports, or testing) or Ubuntu (for lts, ltsedge, or rolling) to be installed. "
+  l+="You can also use the alias 'debian' or 'ubuntu' to refer to all branches of "
+  l+="that particular distribution."
   print_status "$l"
   print_blank_line
   l="  Configuration: This is the machine configuration.  'bare', 'server', "

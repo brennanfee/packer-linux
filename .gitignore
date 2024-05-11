@@ -194,6 +194,7 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/linux,windows,macos,backup,vim,emacs,visualstudiocode,packer,vagrant,ansible
 
 ###### Custom project specific overrides ######
+vagrant/**/*.log
 logs/
 images/
 output/

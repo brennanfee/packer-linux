@@ -28,9 +28,9 @@ unset cur_user
 main() {
   if command -v apt-get &> /dev/null; then
     echo "Clean up Apt"
-    DEBIAN_FRONTEND=noninteractive apt-get -y -q autoremove
-    DEBIAN_FRONTEND=noninteractive apt-get -y -q clean
-    DEBIAN_FRONTEND=noninteractive apt-get -y -q autoclean
+    DEBIAN_FRONTEND=noninteractive apt-get -y -q autoremove || true
+    DEBIAN_FRONTEND=noninteractive apt-get -y -q clean || true
+    DEBIAN_FRONTEND=noninteractive apt-get -y -q autoclean || true
   fi
 
   if command -v pacman &> /dev/null; then
@@ -56,8 +56,12 @@ main() {
     solbuild dc -a
   fi
 
-  sync
-  fstrim -a
+  echo "Syncing disks"
+  sync || true
+  #echo "Calling fstrim"
+  #fstrim -a --quiet-unsupported || true
+
+  echo "Finished minimize"
 }
 
 main

@@ -32,3 +32,8 @@ variable "flags" {
   type    = string
   default = ""
 }
+
+variable "script_source" {
+  type    = string
+  default = "http://{{ .HTTPIP }}:{{ .HTTPPort }}/linux-bootstraps/scripted-installer/debian/deb-install.bash"
+}

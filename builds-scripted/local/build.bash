@@ -29,6 +29,7 @@ BUILD_TYPE="bare"
 CONFIG="default"
 DUAL_DISKS="false"
 ENCRYPTED="false"
+INTERACTIVE="false"
 DEBUG="false"
 HELP="false"
 
@@ -66,7 +67,7 @@ show_help() {
   fi
 }
 
-ARGS=$(getopt --options edh --longoptions "encrypted,dual-disks,help,debug" -- "$@")
+ARGS=$(getopt --options edih --longoptions "encrypted,dual-disks,interactive,help,debug" -- "$@")
 
 # shellcheck disable=SC2181
 if [[ $? -ne 0 ]]; then
@@ -89,6 +90,11 @@ while true; do
       ;;
     '-e' | '--encrypted')
       ENCRYPTED="true"
+      shift
+      continue
+      ;;
+    '-i' | '--interactive')
+      INTERACTIVE="true"
       shift
       continue
       ;;
@@ -193,6 +199,11 @@ main() {
     local vars_password="password=vagrant"
   fi
 
+  local vars_script_source="script_source=http://{{ .HTTPIP }}:{{ .HTTPPort }}/linux-bootstraps/scripted-installer/debian/deb-install.bash"
+  if [[ "${INTERACTIVE}" == "true" ]]; then
+    local vars_script_source="script_source=http://{{ .HTTPIP }}:{{ .HTTPPort }}/linux-bootstraps/scripted-installer/debian/deb-install-interactive.bash"
+  fi
+
   local vars_disks="additional_disks=[]"
   local vars_flags="flags="
   if [[ "${DUAL_DISKS}" == "true" ]]; then
@@ -205,7 +216,11 @@ main() {
   fi
 
   if [[ "${ENCRYPTED}" == "true" ]]; then
-    vars_flags="${vars_flags}--encrypt"
+    vars_flags="${vars_flags}--encrypt "
+  fi
+
+  if [[ "${INTERACTIVE}" == "true" ]]; then
+    vars_flags="${vars_flags}--interactive"
   fi
 
   # Run clean
@@ -214,7 +229,7 @@ main() {
   # Run packer
   packer build -var "${vars_os}" -var "${vars_edition}" \
     -var "${vars_username}" -var "${vars_password}" -var "${vars_disks}" \
-    -var "${vars_config}" -var "${vars_flags}" \
+    -var "${vars_script_source}" -var "${vars_config}" -var "${vars_flags}" \
     -only="${build_file}" "${SCRIPT_DIR}"
 }
 

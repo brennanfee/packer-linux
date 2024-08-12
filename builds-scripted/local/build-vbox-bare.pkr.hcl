@@ -17,7 +17,7 @@ build {
       "sudo su <enter>",
       "/usr/bin/wget -O config.bash http://{{ .HTTPIP }}:{{ .HTTPPort }}/linux-bootstraps/scripted-installer/debian/bootstraper.bash <enter><wait5>",
       # Divert to the local copy of the installer for debugging purposes
-      "export CONFIG_SCRIPT_SOURCE='http://{{ .HTTPIP }}:{{ .HTTPPort }}/linux-bootstraps/scripted-installer/debian/deb-install.bash' <enter>",
+      "export CONFIG_SCRIPT_SOURCE='${var.script_source}' <enter>",
       # Run the installer
       "/usr/bin/bash ./config.bash ${var.os} ${var.edition} ${var.config} --auto-mode ${var.flags}<enter>",
     ]

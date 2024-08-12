@@ -24,8 +24,10 @@ source "${SCRIPT_DIR}/../../script-tools.bash"
 EXIT_CODE="0"
 
 ## Defaults
-CONFIG="bare"
 EDITION="stable"
+BUILD_TYPE="bare"
+CONFIG="default"
+DUAL_DISKS="false"
 ENCRYPTED="false"
 DEBUG="false"
 HELP="false"
@@ -40,18 +42,21 @@ show_help() {
   print_blank_line
   print_status "There are two parameters available: "
   print_blank_line
-  print_status "  build [options] <os edition> <configuration>"
+  print_status "  build [options] <os edition> <build type> (<configuration>)"
   print_blank_line
   print_status "Basic usage:"
   print_blank_line
   print_status "Values can be omitted from the right toward the left of the options. An omitted option accepts the default for that option.  The options are ordered in order of importance and most common usage."
   print_blank_line
-  print_status "  OS Edition: Can be 'stable', 'backports', or 'testing' for Debian or 'lts', 'ltsedge' and 'rolling' for Ubuntu.  Each refers to the branch of OS you want to install.  The default value is 'stable' ('lts' for Ubuntu')."
-  print_status "  Configuration: This is the machine configuration.  In this local test location only 'bare' and 'bios' are supported.  The default is 'bare'."
+  print_status "  OS Edition: Can be 'stable', 'backports', or 'testing' for Debian or 'lts', 'ltshwe', 'ltsedge' and 'rolling' for Ubuntu.  Each refers to the branch of OS you want to install.  The default value is 'stable' ('lts' for Ubuntu')."
+  print_status "  Build Type: This is the end software configuration of the machine.  In this local test location only 'bare' and 'bios' are supported.  The default is 'bare'."
+  print_status "  Configuration: This is the bootstrap configuration.  This is passed through to the bootstrap script.  The default is 'default'."
+  print_blank_line
+  print_status "A -d or --dual-disk option can be included which will produce a vim with two hard drives."
   print_blank_line
   print_status "A -e or --encrypted option can be included which will produce disks that are encrypted.  The default is to not encrypt the drives, which for virtual machines is usually preferred."
   print_blank_line
-  print_status "A -d or --debug option can be included which will turn on debug mode."
+  print_status "A --debug option can be included which will turn on debug mode."
   print_blank_line
 
   if [[ "${HELP}" == "false" ]]; then
@@ -61,7 +66,7 @@ show_help() {
   fi
 }
 
-ARGS=$(getopt --options edh --longoptions "encrypted,debug,help" -- "$@")
+ARGS=$(getopt --options edh --longoptions "encrypted,dual-disks,help,debug" -- "$@")
 
 # shellcheck disable=SC2181
 if [[ $? -ne 0 ]]; then
@@ -77,12 +82,17 @@ while true; do
       HELP="true"
       show_help
       ;;
+    '-d' | '--dual-disk' | '--dual-disks')
+      DUAL_DISKS="true"
+      shift
+      continue
+      ;;
     '-e' | '--encrypted')
       ENCRYPTED="true"
       shift
       continue
       ;;
-    '-d' | '--debug')
+    '--debug')
       DEBUG="true"
       shift
       continue
@@ -104,9 +114,12 @@ for arg; do
       EDITION=$(echo "${arg}" | tr "[:upper:]" "[:lower:]")
       ;;
     2)
-      CONFIG="${arg}"
+      BUILD_TYPE="${arg}"
       ;;
     3)
+      CONFIG="${arg}"
+      ;;
+    4)
       break
       ;;
     *)
@@ -117,24 +130,30 @@ for arg; do
 done
 
 verify_inputs() {
-  local supported_configs=("bare" "bios")
-  local supported_editions=("stable" "backports" "backportsdual" "testing" "lts" "ltsedge" "rolling")
-
-  get_exit_code contains_element "${CONFIG}" "${supported_configs[@]}"
-  if [[ ! ${EXIT_CODE} == "0" ]]; then
-    error_msg "Invalid option for config '${CONFIG}', use 'bare' or 'bios' ONLY"
-  fi
+  local supported_editions=("stable" "backports" "backport" "testing" "lts" "ltshwe" "ltsedge" "rolling")
+  local supported_build_types=("bare" "bios")
 
   get_exit_code contains_element "${EDITION}" "${supported_editions[@]}"
   if [[ ! ${EXIT_CODE} == "0" ]]; then
-    error_msg "Invalid option for edition '${EDITION}', use 'stable', 'backports', 'testing', 'lts', 'ltsedge', or 'rolling'"
+    error_msg "Invalid option for edition '${EDITION}', use 'stable', 'backports', 'testing', 'lts', 'ltshwe', 'ltsedge', or 'rolling'."
+  fi
+
+  get_exit_code contains_element "${BUILD_TYPE}" "${supported_build_types[@]}"
+  if [[ ! ${EXIT_CODE} == "0" ]]; then
+    error_msg "Invalid option for build type '${BUILD_TYPE}', use 'bare' or 'bios' ONLY"
   fi
 }
 
 print_config() {
   print_info "Virtualization Type: VirtualBox"
-  print_info "Configuration: ${CONFIG}"
   print_info "Edition: ${EDITION}"
+  print_info "Build Type: ${BUILD_TYPE}"
+  print_info "Configuration: ${CONFIG}"
+  if [[ "${DUAL_DISKS}" == "true" ]]; then
+    print_info "Dual Disks: Yes"
+  else
+    print_info "Dual Disks: No"
+  fi
   if [[ "${ENCRYPTED}" == "true" ]]; then
     print_info "Encrypted: Yes"
   else
@@ -151,27 +170,52 @@ main() {
   verify_inputs
   print_config
 
-  local build_config="virtualbox-iso.local-vbox-${CONFIG}"
+  local build_file="virtualbox-iso.local-vbox-${BUILD_TYPE}"
 
-  local vars_edition_file="${SCRIPT_DIR}/vars-edition-${EDITION}.pkrvars.hcl"
+  local os="debian"
+  if [[ "${EDITION}" == "lts" || "${EDITION}" == "ltshwe" || "${EDITION}" == "ltsedge" ||
+    "${EDITION}" == "rolling" ]]; then
 
-  local vars_debug="is_debug=0"
-  if [[ "${DEBUG}" == "true" ]]; then
-    vars_debug="is_debug=1"
+    os="ubuntu"
+  fi
+  if [[ "${EDITION}" == "backport" ]]; then
+    EDITION="backports"
   fi
 
-  local vars_encrypted="auto_encrypt_disk=0"
+  local vars_os="os=${os}"
+  local vars_edition="edition=${EDITION}"
+  local vars_username="username=${os}"
+  local vars_password="password=${os}"
+  local vars_config="config=${CONFIG}"
+
+  if [[ "${CONFIG}" == "vagrant" ]]; then
+    local vars_username="username=vagrant"
+    local vars_password="password=vagrant"
+  fi
+
+  local vars_disks="additional_disks=[]"
+  local vars_flags="flags="
+  if [[ "${DUAL_DISKS}" == "true" ]]; then
+    vars_disks="additional_disks=[102400]"
+    vars_flags="${vars_flags}--dual-disks "
+  fi
+
+  if [[ "${DEBUG}" == "true" ]]; then
+    vars_flags="${vars_flags}--debug "
+  fi
+
   if [[ "${ENCRYPTED}" == "true" ]]; then
-    vars_encrypted="auto_encrypt_disk=1"
+    vars_flags="${vars_flags}--encrypt"
   fi
 
   # Run clean
   "${SCRIPT_DIR}/clean.bash"
 
   # Run packer
-  packer build -var "${vars_debug}" -var "${vars_encrypted}" \
-    -var-file="${vars_edition_file}" \
-    -only="${build_config}" "${SCRIPT_DIR}"
+  packer build -var "${vars_os}" -var "${vars_edition}" \
+    -var "${vars_username}" -var "${vars_password}" -var "${vars_disks}" \
+    -var "${vars_config}" -var "${vars_flags}" \
+    -only="${build_file}" "${SCRIPT_DIR}"
 }
 
 main "$@"

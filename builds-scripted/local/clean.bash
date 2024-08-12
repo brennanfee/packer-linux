@@ -29,7 +29,7 @@ main() {
 
   local supported_virtPlatforms=("vbox" "vagrantVbox")
   local supported_distros=("debian" "ubuntu")
-  local supported_editions=("stable" "backports" "backportsdual" "testing" "lts" "ltsedge" "rolling")
+  local supported_editions=("stable" "backports" "testing" "lts" "ltshwe" "ltsedge" "rolling")
   local supported_build_configs=("bare" "bios")
 
   for virtPlatform_to_check in "${supported_virtPlatforms[@]}"; do

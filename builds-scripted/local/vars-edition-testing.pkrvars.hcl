@@ -1,2 +1,0 @@
-os      = "debian"
-edition = "testing"

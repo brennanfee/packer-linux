@@ -74,6 +74,15 @@ if [[ $(hostname -d || true) != "" ]]; then
 fi
 echo "${result}: Domain" | tee -a "${TEST_FILE}"
 
+# Check current language is en_US.UTF-8
+((total_tests = total_tests + 1))
+result="PASS"
+if [[ "${LANG:-}" != "en_US.UTF-8" ]]; then
+  ((failed_tests = failed_tests + 1))
+  result="FAIL"
+fi
+echo "${result}: Language Correct" | tee -a "${TEST_FILE}"
+
 # Timezone should be "American/Los_Angeles"
 ((total_tests = total_tests + 1))
 result="PASS"
@@ -81,12 +90,12 @@ if [[ $(cat /etc/timezone || true) != "America/Los_Angeles" ]]; then
   ((failed_tests = failed_tests + 1))
   result="FAIL"
 fi
-echo "${result}: Timezone Overriden" | tee -a "${TEST_FILE}"
+echo "${result}: Timezone Overridden" | tee -a "${TEST_FILE}"
 
 # Check single disk system
 ((total_tests = total_tests + 1))
 result="PASS"
-if [[ $(lsblk -nd -oNAME,RO | awk '/0$/ {print $1}' | grep -cv '^sr' || true) != "1" ]]; then
+if [[ $(lsblk -dn -oNAME,RO | awk '/0$/ {print $1}' | grep -cv '^sr' || true) != "1" ]]; then
   ((failed_tests = failed_tests + 1))
   result="FAIL"
 fi

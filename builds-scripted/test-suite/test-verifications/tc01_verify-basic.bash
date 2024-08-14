@@ -116,14 +116,14 @@ if [[ $(hostname -s || true) != $(hostname -f || true) ]]; then
 fi
 echo "${result}: Domain" | tee -a "${TEST_FILE}"
 
-# Locale shoudl be "en_US.UTF-8"
+# Language should be "en_US.UTF-8"
 ((total_tests = total_tests + 1))
 result="PASS"
-if [[ "${LC_ALL}" != "en_US.UTF-8" ]]; then
+if [[ "${LANG:-}" != "en_US.UTF-8" ]]; then
   ((failed_tests = failed_tests + 1))
   result="FAIL"
 fi
-echo "${result}: Locale Is Default" | tee -a "${TEST_FILE}"
+echo "${result}: Language Is Default" | tee -a "${TEST_FILE}"
 
 # Timezone should be "American/Chicago"
 ((total_tests = total_tests + 1))
@@ -137,7 +137,7 @@ echo "${result}: Timezone Is Default" | tee -a "${TEST_FILE}"
 # Check single disk system
 ((total_tests = total_tests + 1))
 result="PASS"
-if [[ $(lsblk -nd -oNAME,RO | awk '/0$/ {print $1}' | grep -cv '^sr' || true) != "1" ]]; then
+if [[ $(lsblk -dn -oNAME,RO | awk '/0$/ {print $1}' | grep -cv '^sr' || true) != "1" ]]; then
   ((failed_tests = failed_tests + 1))
   result="FAIL"
 fi

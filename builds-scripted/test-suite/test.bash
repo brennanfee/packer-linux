@@ -148,9 +148,9 @@ main() {
 
   write_report "---- ${TEST_CASE} ----"
 
-  local vars_debug="is_debug=0"
+  local vars_flags="flags="
   if [[ "${DEBUG}" == "true" ]]; then
-    vars_debug="is_debug=1"
+    vars_flags="${vars_flags}--debug "
   fi
 
   local vars_preserve_image="preserve_image=false"
@@ -177,6 +177,16 @@ main() {
     vars_test_case_overrides="${SCRIPT_DIR}/test-variables/vars-noop.pkrvars.hcl"
   fi
 
+  ## TEST_EDITION=stable
+  local edition
+  edition=$(grep 'TEST_EDITION' "${SCRIPT_DIR}/test-configs/${vars_test_case_config_file}" | cut -d= -f2)
+  local vars_edition="edition=${edition}"
+
+  ## OS
+  local os
+  os=$(grep 'AUTO_INSTALL_OS' "${SCRIPT_DIR}/test-configs/${vars_test_case_config_file}" | cut -d= -f2 | sed -e 's/\(^"\|"$\)//g')
+  local vars_os="os=${os}"
+
   ## TEST_SOURCE_ISO=debian
   local source_iso
   source_iso=$(grep 'TEST_SOURCE_ISO' "${SCRIPT_DIR}/test-configs/${vars_test_case_config_file}" | cut -d= -f2)
@@ -193,7 +203,7 @@ main() {
   "${SCRIPT_DIR}/clean.bash"
 
   # Run packer
-  packer build -var "${vars_debug}" \
+  packer build -var "${vars_os}" -var "${vars_edition}" -var "${vars_flags}" \
     -var "${vars_preserve_image}" \
     -var "test_case_config_file=${vars_test_case_config_file}" \
     -var "test_case_verification_script=${vars_test_case_verification_script}" \

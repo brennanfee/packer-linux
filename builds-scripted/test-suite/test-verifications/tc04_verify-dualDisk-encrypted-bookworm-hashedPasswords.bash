@@ -74,14 +74,15 @@ if [[ $(hostname -d || true) != "mydomain.test" ]]; then
 fi
 echo "${result}: Domain" | tee -a "${TEST_FILE}"
 
-# Check current locale is en_GB.UTF-8
+
+# Check the language is "en_US.UTF-8"
 ((total_tests = total_tests + 1))
 result="PASS"
-if [[ "${LC_ALL}" != "en_GB.UTF-8" ]]; then
+if [[ "${LANG:-}" != "en_GB.UTF-8" ]]; then
   ((failed_tests = failed_tests + 1))
   result="FAIL"
 fi
-echo "${result}: Locale Overriden" | tee -a "${TEST_FILE}"
+echo "${result}: Language Overridden" | tee -a "${TEST_FILE}"
 
 # Check that en_US.UTF-8 is still available even if not current
 ((total_tests = total_tests + 1))
@@ -90,7 +91,7 @@ if [[ $(locale -a | grep -c "en_US.utf8" || true) != "1" ]]; then
   ((failed_tests = failed_tests + 1))
   result="FAIL"
 fi
-echo "${result}: Locale Overriden And 'US' still present" | tee -a "${TEST_FILE}"
+echo "${result}: Locale Overridden And 'US' still present" | tee -a "${TEST_FILE}"
 
 # Timezone should be "American/Chicago"
 ((total_tests = total_tests + 1))
@@ -99,12 +100,12 @@ if [[ $(cat /etc/timezone || true) != "America/Chicago" ]]; then
   ((failed_tests = failed_tests + 1))
   result="FAIL"
 fi
-echo "${result}: Timezone Overriden" | tee -a "${TEST_FILE}"
+echo "${result}: Timezone Overridden" | tee -a "${TEST_FILE}"
 
 # Check dual disk system
 ((total_tests = total_tests + 1))
 result="PASS"
-if [[ $(lsblk -nd -oNAME,RO | awk '/0$/ {print $1}' | grep -cv '^sr' || true) != "2" ]]; then
+if [[ $(lsblk -dn -oNAME,RO | awk '/0$/ {print $1}' | grep -cv '^sr' || true) != "2" ]]; then
   ((failed_tests = failed_tests + 1))
   result="FAIL"
 fi

@@ -1,3 +1,13 @@
+variable "os" {
+  type    = string
+  default = "debian"
+}
+
+variable "edition" {
+  type    = string
+  default = "stable"
+}
+
 variable "username" {
   type    = string
   default = "test"
@@ -18,9 +28,9 @@ variable "preserve_image" {
   default = false
 }
 
-variable "is_debug" {
+variable "flags" {
   type    = string
-  default = "0"
+  default = ""
 }
 
 variable "test_case_config_file" {

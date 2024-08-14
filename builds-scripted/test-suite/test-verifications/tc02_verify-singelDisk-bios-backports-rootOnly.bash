@@ -119,7 +119,7 @@ echo "${result}: Domain" | tee -a "${TEST_FILE}"
 # Check multi disk system
 ((total_tests = total_tests + 1))
 result="PASS"
-if [[ $(lsblk -nd -oNAME,RO | awk '/0$/ {print $1}' | grep -cv '^sr' || true) != "2" ]]; then
+if [[ $(lsblk -dn -oNAME,RO | awk '/0$/ {print $1}' | grep -cv '^sr' || true) != "2" ]]; then
   ((failed_tests = failed_tests + 1))
   result="FAIL"
 fi
@@ -171,6 +171,15 @@ if [[ "${attempt}" == "" ]]; then
 fi
 unset attempt
 echo "${result}: Root Password Verified" | tee -a "${TEST_FILE}"
+
+# Check current language is en_US.UTF-8
+((total_tests = total_tests + 1))
+result="PASS"
+if [[ "${LANG:-}" != "en_US.UTF-8" ]]; then
+  ((failed_tests = failed_tests + 1))
+  result="FAIL"
+fi
+echo "${result}: Language Correct" | tee -a "${TEST_FILE}"
 
 # Data folder should exist
 ((total_tests = total_tests + 1))

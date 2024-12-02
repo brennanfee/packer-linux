@@ -121,7 +121,7 @@ function pull_ubuntu() {
   local version_file="${root_path}/version.txt"
 
   # NOTE: Will need to be updated upon any Ubuntu LTS release
-  local lts_codename="jammy"
+  local lts_codename="noble"
 
   wget -O "${shafile}.orig" "https://releases.ubuntu.com/${lts_codename}/SHA256SUMS"
   # read version and sha from the downloaded shafile

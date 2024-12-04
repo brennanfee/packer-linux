@@ -58,7 +58,8 @@ main() {
 
     if [[ "${distro}" = "debian" ]]; then
       # Need to ensure the linux headers are installed so it can compile the module
-      DEBIAN_FRONTEND=noninteractive apt-get install -y -q --no-install-recommends linux-image-amd64 linux-headers-amd64
+      # TODO: Only install if needed (also check for backport kernels)
+      # DEBIAN_FRONTEND=noninteractive apt-get install -y -q --no-install-recommends linux-image-amd64 linux-headers-amd64
 
       # If a UEFI install, fix the EFI boot
       if [[ -d "/boot/efi/" ]]; then
@@ -90,18 +91,28 @@ main() {
     local dest="/usr/local/src/virtualbox-guest"
     mkdir -p "${dest}"
 
+    # Can't use $USER as we are running this script as root/sudo
+    local current_user
+    current_user=$(logname)
+
     # Determine if we need to download the ISO and do so if needed
     if [[ ! -f "${dest}/VBoxGuestAdditions.iso" ]]; then
       # First see if we have the iso loaded in the home dir...
-      if [[ -f "${HOME}/VBoxGuestAdditions.iso" ]]; then
-        mv "${HOME}/VBoxGuestAdditions.iso" "${dest}/VBoxGuestAdditions.iso"
-        echo "From HOME Folder" >> "${dest}/version.txt"
+      if [[ -f "/home/${current_user}/VBoxGuestAdditions.iso" ]]; then
+        mv "/home/${current_user}/VBoxGuestAdditions.iso" "${dest}/VBoxGuestAdditions.iso"
+        mv "/home/${current_user}/.vbox_version" "${dest}/vbox_version"
+        echo "From HOME Folder" >> "${dest}/version-source.txt"
+      elif [[ -f "/srv/VBoxGuestAdditions.iso" ]]; then
+        cp "/srv/VBoxGuestAdditions.iso" "${dest}/VBoxGuestAdditions.iso"
+        cp "/srv/.vbox_version" "${dest}/vbox_version"
+        echo "From Srv Folder" >> "${dest}/version-source.txt"
       else
         # Figure out which version to download
         /usr/bin/wget --output-document "${dest}/LATEST-STABLE.TXT" https://download.virtualbox.org/virtualbox/LATEST-STABLE.TXT
         local vb_version
         vb_version=$(cat "${dest}/LATEST-STABLE.TXT")
-        mv "${dest}/LATEST-STABLE.TXT" "${dest}/version.txt"
+        mv "${dest}/LATEST-STABLE.TXT" "${dest}/vbox_version"
+        echo "Downloaded" >> "${dest}/version-source.txt"
 
         # Download it
         local vb_url="https://download.virtualbox.org/virtualbox/${vb_version}/VBoxGuestAdditions_${vb_version}.iso"
@@ -118,10 +129,6 @@ main() {
     local install_date
     install_date=$(date -Is)
     echo "${install_date}" >> "${dest}/guest-install-no-x11.txt"
-
-    # Can't use $USER as we are running this script as root/sudo
-    local current_user
-    current_user=$(logname)
 
     # Add user to the vboxsf group
     local group_exists

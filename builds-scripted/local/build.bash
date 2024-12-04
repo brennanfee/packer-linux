@@ -190,7 +190,7 @@ main() {
 
   local vars_os="os=${os}"
   local vars_edition="edition=${EDITION}"
-  local vars_username="username=${os}"
+  local vars_username="username=root"
   local vars_password="password=${os}"
   local vars_config="config=${CONFIG}"
 
@@ -199,9 +199,9 @@ main() {
     local vars_password="password=vagrant"
   fi
 
-  local vars_script_source="script_source=http://{{ .HTTPIP }}:{{ .HTTPPort }}/linux-bootstraps/scripted-installer/debian/deb-install.bash"
+  local vars_script_source="script_source=http://{{ .HTTPIP }}:{{ .HTTPPort }}/deb-install.bash"
   if [[ "${INTERACTIVE}" == "true" ]]; then
-    local vars_script_source="script_source=http://{{ .HTTPIP }}:{{ .HTTPPort }}/linux-bootstraps/scripted-installer/debian/deb-install-interactive.bash"
+    local vars_script_source="script_source=http://{{ .HTTPIP }}:{{ .HTTPPort }}/deb-install-interactive.bash"
   fi
 
   local vars_disks="additional_disks=[]"

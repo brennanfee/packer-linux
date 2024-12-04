@@ -4,7 +4,7 @@ source "virtualbox-iso" "scripted" {
 
   headless = false
 
-  http_directory = "${path.root}/../../../"
+  http_directory = "${path.root}/../../../linux-bootstraps/scripted-installer/debian/"
 
   communicator           = "ssh"
   ssh_username           = "${var.username}"
@@ -27,34 +27,23 @@ source "virtualbox-iso" "scripted" {
   cpus                     = 2
   usb                      = true
   gfx_controller           = "vmsvga"
-  gfx_vram_size            = 128
   gfx_accelerate_3d        = true
+  gfx_vram_size            = 128
   gfx_efi_resolution       = "1280x720"
   rtc_time_base            = "UTC"
   nested_virt              = true
-  audio_controller         = "hda"
-  sound                    = "pulse"
+  sound                    = "default"
 
   disk_additional_size = "${var.additional_disks}"
 
   vboxmanage = [
-    ["modifyvm", "{{.Name}}", "--paravirtprovider", "default"],
-    ["modifyvm", "{{.Name}}", "--pae", "on"],
-    ["modifyvm", "{{.Name}}", "--acpi", "on"],
-    ["modifyvm", "{{.Name}}", "--ioapic", "on"],
-    ["modifyvm", "{{.Name}}", "--monitorcount", "1"],
-    ["modifyvm", "{{.Name}}", "--hwvirtex", "on"],
-    ["modifyvm", "{{.Name}}", "--nestedpaging", "on"],
+    ["modifyvm", "{{.Name}}", "--tpm-type", "2.0"],
     ["modifyvm", "{{.Name}}", "--clipboard-mode", "bidirectional"],
     ["modifyvm", "{{.Name}}", "--draganddrop", "bidirectional"],
-    ["modifyvm", "{{.Name}}", "--mouse", "usbtablet"],
+    ["modifyvm", "{{.Name}}", "--mouse", "usbmtscreenpluspad"],
     ["modifyvm", "{{.Name}}", "--keyboard", "usb"],
-    ["modifyvm", "{{.Name}}", "--audioout", "on"],
-    ["modifyvm", "{{.Name}}", "--audioin", "on"],
-    ["modifyvm", "{{.Name}}", "--usbehci", "off"],
-    ["modifyvm", "{{.Name}}", "--usbxhci", "off"],
+    ["modifyvm", "{{.Name}}", "--usbxhci", "on"],
     ["modifyvm", "{{.Name}}", "--vrde", "off"],
     ["setextradata", "{{.Name}}", "GUI/SuppressMessages", "all"],
-    ["setextradata", "{{.Name}}", "VBoxInternal2/EfiGraphicsResolution", "1280x720"],
   ]
 }

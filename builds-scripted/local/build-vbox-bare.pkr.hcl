@@ -15,7 +15,7 @@ build {
       "e<wait2>",
       "<down><down><end> noeject noprompt<f10><wait20>",
       "sudo su <enter>",
-      "/usr/bin/wget -O config.bash http://{{ .HTTPIP }}:{{ .HTTPPort }}/linux-bootstraps/scripted-installer/debian/bootstraper.bash <enter><wait5>",
+      "/usr/bin/wget -O config.bash http://{{ .HTTPIP }}:{{ .HTTPPort }}/deb-bootstrapper.bash <enter><wait5>",
       # Divert to the local copy of the installer for debugging purposes
       "export CONFIG_SCRIPT_SOURCE='${var.script_source}' <enter>",
       # Run the installer

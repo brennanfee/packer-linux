@@ -17,15 +17,19 @@ if ! ${SOURCED}; then
 fi
 # END Bash scrict mode
 
-# Must be root
-cur_user=$(id -u)
-if [[ ${cur_user} -ne 0 ]]; then
-  echo "This script must be run as root."
-  exit 1
-fi
-unset cur_user
+function check_for_root() {
+  # Must be root
+  local cur_user
+  cur_user=$(id -u)
+  if [[ ${cur_user} -ne 0 ]]; then
+    echo "This script must be run as root."
+    exit 1
+  fi
+}
 
 main() {
+  check_for_root
+
   local stamp_path="/srv"
   if [[ -d "/data" ]]; then
     stamp_path="/data"
@@ -48,22 +52,42 @@ main() {
   current_user=$(logname)
   echo "Packer Installed User: ${current_user}" | sudo tee -a "${stamp_path}/image_build_info"
 
+  local vbox_version
   if [[ -f "/home/${current_user}/.vbox_version" ]]; then
-    local vbox_version
-    vbox_version=$(cat /home/"${current_user}"/.vbox_version)
+    vbox_version=$(cat "/home/${current_user}/.vbox_version")
+    rm "/home/${current_user}/.vbox_version"
+  elif [[ -f "/srv/.vbox_version" ]]; then
+    vbox_version=$(sudo cat "/srv/.vbox_version")
+    rm "/srv/.vbox_version"
+  elif [[ -f "/srv/vbox_version" ]]; then
+    vbox_version=$(sudo cat "/srv/vbox_version")
+    rm "/srv/vbox_version"
+  elif [[ -f "/usr/local/src/virtualbox-guest/vbox_version" ]]; then
+    vbox_version=$(sudo cat "/usr/local/src/virtualbox-guest/vbox_version")
+  fi
+
+  if [[ -n "${vbox_version}" ]]; then
     echo "VirtualBox Version: ${vbox_version}" | sudo tee -a "${stamp_path}/image_build_info"
-    rm /home/"${current_user}"/.vbox_version
   fi
 
-  local group_exists
-  group_exists=$(getent group data-user | wc -l || true)
-
-  if [[ ${group_exists} == "1" ]]; then
-    chown root:data-user "${stamp_path}/image_build_info"
+  if [[ ${stamp_path} == "/data" ]]; then
+    local group_exists
+    group_exists=$(getent group data-user | wc -l || true)
+    if [[ ${group_exists} == "1" ]]; then
+      chown root:data-user "${stamp_path}/image_build_info"
+    else
+      chown root:users "${stamp_path}/image_build_info"
+    fi
   else
-    chown root:users "${stamp_path}/image_build_info"
+    local group_exists
+    group_exists=$(getent group srv-user | wc -l || true)
+    if [[ ${group_exists} == "1" ]]; then
+      chown root:srv-user "${stamp_path}/image_build_info"
+    else
+      chown root:users "${stamp_path}/image_build_info"
+    fi
   fi
-  chmod g+w "${stamp_path}/image_build_info"
+  chmod g+rw "${stamp_path}/image_build_info"
 }
 
-main
+main "$@"

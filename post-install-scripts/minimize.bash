@@ -17,19 +17,27 @@ if ! ${SOURCED}; then
 fi
 # END Bash scrict mode
 
-# Must be root
-cur_user=$(id -u)
-if [[ ${cur_user} -ne 0 ]]; then
-  echo "This script must be run as root."
-  exit 1
-fi
-unset cur_user
+function check_for_root() {
+  # Must be root
+  local cur_user
+  cur_user=$(id -u)
+  if [[ ${cur_user} -ne 0 ]]; then
+    echo "This script must be run as root."
+    exit 1
+  fi
+}
 
 main() {
+  check_for_root
+
   if command -v apt-get &> /dev/null; then
-    echo "Clean up Apt"
+    echo "Clean up Apt - Update"
+    DEBIAN_FRONTEND=noninteractive apt-get -y -q update || true
+    echo "Clean up Apt - Autoremove"
     DEBIAN_FRONTEND=noninteractive apt-get -y -q autoremove || true
+    echo "Clean up Apt - Clean"
     DEBIAN_FRONTEND=noninteractive apt-get -y -q clean || true
+    echo "Clean up Apt - AutoClean"
     DEBIAN_FRONTEND=noninteractive apt-get -y -q autoclean || true
   fi
 
@@ -58,10 +66,11 @@ main() {
 
   echo "Syncing disks"
   sync || true
-  #echo "Calling fstrim"
-  #fstrim -a --quiet-unsupported || true
+  echo "Calling fstrim"
+  fstrim -a --quiet-unsupported || true
 
   echo "Finished minimize"
+  exit 0
 }
 
 main

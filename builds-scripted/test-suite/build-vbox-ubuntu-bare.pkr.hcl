@@ -5,7 +5,7 @@ build {
     keep_registered  = "${var.preserve_image}"
     skip_export      = true
     vm_name          = "test-vbox-ubuntu-bare"
-    iso_url          = "file:${path.root}/../../ISOs/ubuntu/ubuntu-live-server-amd64.iso"
+    iso_url          = "file:${path.root}/../../ISOs/ubuntu/ubuntu-live-amd64-standard.iso"
     iso_checksum     = "file:${path.root}/../../ISOs/ubuntu/SHA256SUMS"
 
     firmware = "efi"
@@ -15,7 +15,7 @@ build {
       "<enter><wait60>",
       "<f2><wait2>",
       "sudo su <enter>",
-      "/usr/bin/wget -O config.bash https://raw.githubusercontent.com/brennanfee/linux-bootstraps/main/scripted-installer/debian/bootstraper.bash <enter><wait5>",
+      "/usr/bin/wget -O config.bash https://raw.githubusercontent.com/brennanfee/linux-bootstraps/refs/heads/main/scripted-installer/debian/deb-bootstrapper.bash <enter><wait5>",
       "/usr/bin/bash ./config.bash ${var.os} ${var.edition} external http://{{ .HTTPIP }}:{{ .HTTPPort }}/${var.test_case_config_file} ${var.flags} --auto-mode<enter>",
     ]
   }

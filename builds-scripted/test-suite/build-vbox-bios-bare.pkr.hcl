@@ -15,7 +15,7 @@ build {
       "<tab><wait2>",
       " noeject noprompt<enter><wait20>",
       "sudo su <enter>",
-      "/usr/bin/wget -O config.bash https://raw.githubusercontent.com/brennanfee/linux-bootstraps/main/scripted-installer/debian/bootstraper.bash <enter><wait5>",
+      "/usr/bin/wget -O config.bash https://raw.githubusercontent.com/brennanfee/linux-bootstraps/refs/heads/main/scripted-installer/debian/deb-bootstrapper.bash <enter><wait5>",
       "/usr/bin/bash ./config.bash ${var.os} ${var.edition} external http://{{ .HTTPIP }}:{{ .HTTPPort }}/${var.test_case_config_file} ${var.flags} --auto-mode<enter>",
     ]
   }
